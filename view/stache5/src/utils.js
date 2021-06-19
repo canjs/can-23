@@ -122,7 +122,7 @@ module.exports = {
 		for (var i = 0; i < len; i++) {
 			var aliases = {};
 
-			var item = isObservable ? new KeyObservable(items, i) :items[i];
+			var item = isObservable ? observationReader.get(items, '' + i) :items[i];
 
 			if (canReflect.size(hashOptions) > 0) {
 				if (hashOptions.value) {

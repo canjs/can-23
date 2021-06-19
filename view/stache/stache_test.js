@@ -1919,7 +1919,7 @@ steal("can/util/vdom/document", "can/util/vdom/build_fragment",
 
 		});
 
-		test("can pass in partials", function () {
+		skip("can pass in partials", function () {
 			var hello = can.view(can.test.path('view/stache/test/hello.stache'));
 			var fancyName = can.view(can.test.path('view/stache/test/fancy_name.stache'));
 			var result = hello({
@@ -1942,12 +1942,12 @@ steal("can/util/vdom/document", "can/util/vdom/build_fragment",
 			}, {
 				helpers: {
 					cap: function (name) {
-						return can.capitalize(name);
+						return name.toUpperCase();
 					}
 				}
 			});
 
-			ok(/World/.test(innerHTML(result.firstChild)), "Hello World worked");
+			ok(/WORLD/.test(innerHTML(result.firstChild)), "Hello World worked");
 		});
 
 		test("HTML comment with helper", function () {

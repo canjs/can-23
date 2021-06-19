@@ -92,7 +92,7 @@ var core = {
 		} else if (exprData instanceof expression.Bracket) {
 			value = exprData.value(scope);
 		} else if (exprData instanceof expression.Lookup) {
-			value = exprData.value(scope);
+			value = exprData.value(scope, {}, helperOptions);
 		} else if (exprData instanceof expression.Literal) {
 			value = exprData.value.bind(exprData);
 		} else if (exprData instanceof expression.Helper && exprData.methodExpr instanceof expression.Bracket) {
@@ -354,10 +354,10 @@ var core = {
 			canReflect.onValue(observable, k);
 
 			var value = canReflect.getValue(observable);
-
+			
 			// If value is a function and not a Lookup ({{foo}}),
 			// it's a helper that returned a function and should be called.
-			if(typeof value === "function" && !(exprData instanceof expression.Lookup)) {
+			if(typeof value === "function" /*&& !(exprData instanceof expression.Lookup) */) {
 
 				// A helper function should do it's own binding.  Similar to how
 				// we prevented this function's compute from being noticed by parent expressions,

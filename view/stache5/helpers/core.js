@@ -218,7 +218,16 @@ var ifHelper = assign(function ifHelper(expr, options) {
 	return !!value;
 }, {requiresOptionsArgument: true, isLiveBound: true});
 
-
+// 2.3 added
+var atIndexHelper = function(offset, options) {
+	if (!options) {
+		options = offset;
+		offset = 0;
+	}
+	var index = options.scope.attr("@index");
+	return ""+((can.isFunction(index) ? index() : index) + offset);
+};
+atIndexHelper.isLiveBound = true;
 
 
 //## EQ/IS HELPER
@@ -373,7 +382,10 @@ var eachHelper = function(items) {
 		options.metadata.rendered = true;
 		return function(el){
 			var cb = function (item, index) {
-				var aliases = {};
+				var aliases = {
+					"%index": index,
+					"@index": index
+				};
 
 				if (canReflect.size(hashOptions) > 0) {
 					if (hashOptions.value) {
@@ -387,7 +399,7 @@ var eachHelper = function(items) {
 				return options.fn(
 					options.scope
 					.add(aliases, { notContext: true })
-					.add({ index: index }, { special: true })
+					//.add({ index: index }, { special: true })
 					.add(item),
 				options.options
 				);
@@ -455,6 +467,7 @@ var withHelper = function (expr, options) {
 		options = expr;
 		expr = true;
 		ctx = options.hash;
+		return options.fn(ctx || {});
 	} else {
 		expr = helpersCore.resolve(expr);
 		if(options.hash && canReflect.size(options.hash) > 0) {
@@ -462,8 +475,11 @@ var withHelper = function (expr, options) {
 			// Leaving it undocumented for now, but no reason not to support it.
 			ctx = options.scope.add(options.hash, { notContext: true }).add(ctx);
 		}
+		if ( !! expr) {
+			return options.fn(ctx || {});
+		}
 	}
-	return options.fn(ctx || {});
+
 };
 withHelper.requiresOptionsArgument = true;
 
@@ -512,15 +528,22 @@ var notConverter = {
 // ## Register as defaults
 
 assign(builtInHelpers, {
-	/*'debugger': debuggerHelper,
+	'if': ifHelper,
+	eq: isHelper,
 	each: eachHelper,
+	'with': withHelper,
+	unless: unlessHelper,
+	"@index": atIndexHelper
+
+	/*'debugger': debuggerHelper,
+
 	eachOf: eachHelper,
 	index: indexHelper,
-	'if': ifHelper,
+
 	is: isHelper,
 	eq: isHelper,
-	unless: unlessHelper,
-	'with': withHelper,
+
+
 	console: console,
 	data: dataHelper,
 	domData: domDataHelper,

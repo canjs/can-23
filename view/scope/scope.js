@@ -7,6 +7,7 @@ var makeComputeData = require("./compute_data");
 var assign = require("can-assign");
 var TemplateContext = require('can-view-scope/template-context');
 var ObservationRecorder = require("can-observation-recorder");
+var canReflect = require("can-reflect");
 var stacheHelpers = require("can-stache-helpers");
 		/**
 		 * @add can.view.Scope
@@ -84,6 +85,7 @@ var stacheHelpers = require("can-stache-helpers");
 			 *   @option {*} value the found value
 			 */
 			read: function (attr, options) {
+
 				// If it's the root, jump right to it.
 				if(attr === "%root") {
 					return { value: this.getRoot() };
@@ -120,7 +122,7 @@ var stacheHelpers = require("can-stache-helpers");
 					// the `isContextBased` check above won't catch it when you go from
 					// `../foo` to `foo` because `foo` isn't context based.
 					var parent = this._parent;
-					while(parent._meta.notContext) {
+					while(parent._meta.notContext || parent._meta.special) {
 						parent = parent._parent;
 					}
 					if ( isParentContext ) {
@@ -132,7 +134,7 @@ var stacheHelpers = require("can-stache-helpers");
 				}
 				else if ( isCurrentContext ) {
 					return {
-						value: this._context
+						value: canReflect.getValue( this._context )
 					};
 				}
 
@@ -188,6 +190,27 @@ var stacheHelpers = require("can-stache-helpers");
 				// saved so that either the observable the key is found in can be returned, or in the case the key is not
 				// found in an observable the closest observable can be returned.
 
+
+
+				if(readOptions.prioritizeHelpers) {
+					var getObserves = ObservationRecorder.trap();
+					var helper = this.getHelperOrPartial(keyReads);
+					var observes = getObserves();
+					if (helper && helper.value) {
+						if(options.callHelperFunction) {
+
+							return {
+								//setRoot: currentSetObserve,
+								//reads: currentSetReads(),
+								value: helper.value.call(this._context, options.helperOptions)
+							}
+						}
+
+						// Don't return parent so `.bind` is not used.
+						return {value: helper.value};
+					}
+				}
+
 				while (currentScope) {
 					currentContext = currentScope._context;
 
@@ -231,11 +254,21 @@ var stacheHelpers = require("can-stache-helpers");
 					}
 				}
 
-				var helper = this.getHelperOrPartial(keyReads);
+				if(!readOptions.prioritizeHelpers) {
+					var helper = this.getHelperOrPartial(keyReads);
 
-				if (helper && helper.value) {
-					// Don't return parent so `.bind` is not used.
-					return {value: helper.value};
+					if (helper && helper.value) {
+						if(options.callHelperFunction) {
+
+							return {
+								//setRoot: currentSetObserve,
+								//reads: currentSetReads(),
+								value: helper.value.call(this._context, options.helperOptions)
+							}
+						}
+						// Don't return parent so `.bind` is not used.
+						return {value: helper.value};
+					}
 				}
 
 				// The **value was not found**, return `undefined` for the value.

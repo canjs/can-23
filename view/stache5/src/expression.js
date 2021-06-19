@@ -253,6 +253,7 @@ var expression = {
 		return expr;
 	},
 	hydrateAst: function(ast, options, methodType, isArg){
+		
 		var hashes;
 		if(ast.type === "Lookup") {
 			var LookupRule = options.lookupRule(ast, methodType, isArg);

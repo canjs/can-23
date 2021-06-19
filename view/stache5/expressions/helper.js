@@ -7,18 +7,24 @@ var expressionHelpers = require("../src/expression-helpers");
 var canReflect = require('can-reflect');
 
 var Helper = function(methodExpression, argExpressions, hashExpressions){
-	
 	this.methodExpr = methodExpression;
 	this.argExprs = argExpressions;
 	this.hashExprs = hashExpressions;
 	this.mode = null;
 };
-Helper.prototype.args = function(scope){
+Helper.prototype.args = function(scope, readOptions, helperOptions){
+	var readOptions = assign( {
+		doNotExecute: true,
+		callMethodsOnObservables: true,
+		isArgument: true
+	}, readOptions || {} );
+
 	var args = [];
 	for(var i = 0, len = this.argExprs.length; i < len; i++) {
 		var arg = this.argExprs[i];
 		// TODO: once we know the helper, we should be able to avoid compute conversion
-		args.push( expressionHelpers.toComputeOrValue( arg.value.apply(arg, arguments) ) );
+		var value = arg.value(scope, readOptions , helperOptions );
+		args.push( expressionHelpers.toComputeOrValue( value ) );
 	}
 	return args;
 };
@@ -41,7 +47,7 @@ Helper.prototype.value = function(scope, helperOptions){
 		helperInstance = this,
 		// proxyMethods must be false so that the `requiresOptionsArgument` and any
 		// other flags stored on the function are preserved
-		helperFn = scope.computeData(methodKey,  { proxyMethods: false }),
+		helperFn = scope.computeData(methodKey,  { proxyMethods: false, doNotExecute: true, prioritizeHelpers: true }),
 		initialValue = helperFn && helperFn.initialValue,
 		thisArg = helperFn && helperFn.thisArg;
 

@@ -258,7 +258,8 @@ var stacheHelpers = require("can-stache-helpers");
 					var helper = this.getHelperOrPartial(keyReads);
 
 					if (helper && helper.value) {
-						if(options.callHelperFunction) {
+						// Call expressions certainly should not be called
+						if(options.callHelperFunction && !keyReads[keyReads.length - 1].at) {
 
 							return {
 								//setRoot: currentSetObserve,

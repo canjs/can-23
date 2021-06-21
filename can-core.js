@@ -4,6 +4,16 @@ var canReflect = require("can-reflect");
 var Construct = require("can-construct");
 var stacheKey = require("can-stache-key");
 var List = require("can-list");
+var TemplateContext = require("can-view-scope/template-context");
+
+canReflect.assignSymbols(TemplateContext,{
+	"can.new": function(){
+		var instance = Object.create(this, TemplateContext.prototype);
+		return TemplateContext.apply(instance , arguments);
+	}
+})
+
+TemplateContext
 
 //var each = require("can-util/js/each/each");
 

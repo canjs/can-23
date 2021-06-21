@@ -533,11 +533,13 @@ assign(builtInHelpers, {
 	each: eachHelper,
 	'with': withHelper,
 	unless: unlessHelper,
-	"@index": atIndexHelper
+	"@index": atIndexHelper,
+	'switch': switchHelper,
+	eachOf: eachHelper,
 
 	/*'debugger': debuggerHelper,
 
-	eachOf: eachHelper,
+
 	index: indexHelper,
 
 	is: isHelper,
@@ -547,7 +549,7 @@ assign(builtInHelpers, {
 	console: console,
 	data: dataHelper,
 	domData: domDataHelper,
-	'switch': switchHelper,
+
 	joinBase: joinBaseHelper,
 	and: andHelper,
 	or: orHelper,

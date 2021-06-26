@@ -8,7 +8,8 @@ var assign = require("can-assign");
 var TemplateContext = require('can-view-scope/template-context');
 var ObservationRecorder = require("can-observation-recorder");
 var canReflect = require("can-reflect");
-var stacheHelpers = require("can-stache-helpers");
+var defineLazyValue = require('can-define-lazy-value');
+var stacheHelpers = require("../helpers");
 		/**
 		 * @add can.view.Scope
 		 */
@@ -397,6 +398,25 @@ var stacheHelpers = require("can-stache-helpers");
 					can.compute.set(context, propName, value, options);
 				}
 			},
+			getTemplateContext: function() {
+				var lastScope;
+
+				// find the first reference scope
+				var templateContext = this.getScope(function(scope) {
+					lastScope = scope;
+					return scope._context instanceof TemplateContext;
+				});
+
+				// if there is no reference scope, add one as the root
+				if(!templateContext) {
+					templateContext = new Scope(new TemplateContext());
+
+					// add templateContext to root of the scope chain so it
+					// can be found using `getScope` next time it is looked up
+					lastScope._parent = templateContext;
+				}
+				return templateContext;
+			},
 
 			// ## Scope.prototype.attr
 			// Gets or sets a value in the scope without being observable.
@@ -461,6 +481,10 @@ var stacheHelpers = require("can-stache-helpers");
 					return this;
 				}
 			}
+		});
+
+		defineLazyValue(Scope.prototype, 'templateContext', function() {
+			return this.getTemplateContext()._context;
 		});
 
 		can.view.Scope = Scope;

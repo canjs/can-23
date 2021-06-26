@@ -5,15 +5,21 @@ var Construct = require("can-construct");
 var stacheKey = require("can-stache-key");
 var List = require("can-list");
 var TemplateContext = require("can-view-scope/template-context");
+var domEvents = require("can-dom-events");
+var mutateNode = require("can-dom-mutate/node");
+var fragment = require("can-fragment");
+var domData = require("can-dom-data");
+var viewModel = require("can-view-model");
+var queues = require("can-queues");
+
+require("can-map-define");
 
 canReflect.assignSymbols(TemplateContext,{
 	"can.new": function(){
 		var instance = Object.create(this, TemplateContext.prototype);
 		return TemplateContext.apply(instance , arguments);
 	}
-})
-
-TemplateContext
+});
 
 //var each = require("can-util/js/each/each");
 
@@ -71,8 +77,7 @@ stacheKey.propertyReadersMap.object.read = function compatabilityObjectRead(valu
 }
 
 
-
-module.exports = {
+var can23 = {
   Map: Map,
   compute: compute,
   each: canReflect.each,
@@ -86,8 +91,84 @@ module.exports = {
   view: {},
   List: List,
   global: window,
-  $: function(selector) {
-    return document.querySelectorAll(selector);
-  },
-  isFunction: canReflect.isFunctionLike
+	$: function(selector) {
+		if(typeof selector === "string") {
+			return document.querySelectorAll(selector);
+		}
+		if(canReflect.isListLike(selector) && selector !== window) {
+			return [].slice.call(selector)
+		}
+		return [selector];
+	},
+	isFunction: canReflect.isFunctionLike,
+	append: function(target, content){
+		if(typeof content === "string") {
+			content = fragment(content, target[0].ownerDocument);
+		}
+		var clone;
+		if(target.length > 1) {
+			clone = content.cloneNode(true);
+		}
+		target.forEach(function(targetNode, i){
+			if(i === 0) {
+				mutateNode.appendChild.call(targetNode, content);
+			} else {
+				var nextClone = clone.cloneNode(true);
+				mutateNode.appendChild.call(targetNode, nextClone);
+			}
+		});
+
+		return content;
+	},
+	trigger: function(target, event){
+		target = can23.$(target);
+		target.forEach(function(targetNode, i){
+			if(typeof targetNode.dispatch === "function") {
+				targetNode.dispatch(event);
+			} else {
+				domEvents.dispatch(targetNode, event);
+			}
+
+		});
+		return target;
+	},
+	remove: function(target) {
+		target = can23.$(target);
+		target.forEach(function(targetNode, i){
+			mutateNode.removeChild.call(targetNode.parentNode, targetNode)
+		});
+		return target;
+	},
+	data: function(target, prop, data){
+		target = can23.$(target);
+		if(arguments.length > 2) {
+			target.forEach(function(targetNode, i){
+				domData.set(targetNode, prop, data)
+			});
+			return target;
+		} else {
+			return domData.get(target[0], prop)
+		}
+
+	},
+	trim: function(str) {
+		return str.trim();
+	},
+	viewModel: function(target, attr, value) {
+		var args = Array.prototype.slice.call(arguments, 0);
+		args[0] = can23.$(target)[0];
+		return viewModel.apply(this, args);
+	},
+	addClass: function(target, className){
+		target = can23.$(target);
+		target.forEach(function(targetNode, i){
+			targetNode.classList.add(className)
+		});
+		return target;
+	},
+	batch: queues.batch
 };
+
+can23.scope = can23.viewModel;
+
+module.exports = can23;

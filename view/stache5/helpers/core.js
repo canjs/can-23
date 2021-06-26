@@ -10,7 +10,7 @@ var canReflect = require("can-reflect");
 var KeyObservable = require("../src/key-observable");
 var Observation = require("can-observation");
 var TruthyObservable = require("../src/truthy-observable");
-var helpers = require("can-stache-helpers");
+var helpers = require("../../helpers");
 
 
 

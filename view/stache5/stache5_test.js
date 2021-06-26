@@ -4524,18 +4524,18 @@ function skip(test) {
 
 		test("call expression with #if", function(){
 
-				var truthy = can.compute(true);
-				var template = can.stache("<div>{{#if(truthy)}}true{{else}}false{{/if}}</div>");
-				var frag = template({truthy: truthy});
+			var truthy = can.compute(true);
+			var template = can.stache("<div>{{#if(truthy)}}true{{else}}false{{/if}}</div>");
+			var frag = template({truthy: truthy});
 
-				equal( frag.firstChild.innerText, "true", "set to true");
+			equal( frag.firstChild.innerText, "true", "set to true");
 
-				truthy(false);
+			truthy(false);
 
-				equal( frag.firstChild.innerText, "false", "set to false");
-			});
-
-			test('getHelper w/o optional options argument (#1497)', function() {
+			equal( frag.firstChild.innerText, "false", "set to false");
+		});
+		return;
+		test('getHelper w/o optional options argument (#1497)', function() {
 			var options = can.stache.getHelper('each');
 			ok(typeof options.fn === 'function', 'each helper returned');
 		});

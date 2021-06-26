@@ -65,10 +65,7 @@ Helper.prototype.value = function(scope, helperOptions){
 			// so we don't add extra args if it looks like it's part of some other object.
 			if(initialValue.requiresOptionsArgument || !helperScopeKeyData.parentHasKey  ) {
 				args.push(helperOptionArg);
-			} else {
-				debugger;
-			}
-
+			} 
 
 			return initialValue.apply(thisArg || scope.peek("this"), args);
 		};

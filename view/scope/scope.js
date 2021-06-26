@@ -92,6 +92,7 @@ var stacheHelpers = require("../helpers");
 					return { value: this.getRoot() };
 				}
 				if(attr === "%element" || attr === "%event" || attr === "%viewModel") {
+
 					return this.getSpecial(attr.substr(1));
 				}
 
@@ -156,11 +157,11 @@ var stacheHelpers = require("../helpers");
 			},
 			getSpecial: function(specialAttr){
 				var cur = this;
-				while(!cur._meta.special) {
+				while(cur && !cur._meta.special) {
 					cur = cur._parent;
 				}
 				return {
-					value: cur._context[specialAttr]
+					value: cur ? cur._context[specialAttr] : undefined
 				};
 			},
 			// ## Scope.prototype._read

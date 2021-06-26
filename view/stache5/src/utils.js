@@ -136,7 +136,7 @@ module.exports = {
 			result.push(helperOptions.fn(
 				scope
 				.add(aliases, { notContext: true })
-				.add({ index: i }, { special: true })
+				.add({ "%index": i }, { special: true })
 				.add(item))
 			);
 		}

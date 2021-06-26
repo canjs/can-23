@@ -11,7 +11,7 @@ var KeyObservable = require("../src/key-observable");
 var Observation = require("can-observation");
 var TruthyObservable = require("../src/truthy-observable");
 var helpers = require("../../helpers");
-
+var domData = require('can-dom-data');
 
 
 //var domData = require('can-dom-data');
@@ -382,6 +382,7 @@ var eachHelper = function(items) {
 		options.metadata.rendered = true;
 		return function(el){
 			var cb = function (item, index) {
+
 				var aliases = {
 					"%index": index,
 					"@index": index
@@ -400,7 +401,7 @@ var eachHelper = function(items) {
 					options.scope
 					.add(aliases, { notContext: true })
 					//.add({ index: index }, { special: true })
-					.add(item),
+					.add(helpersCore.resolve(item)),
 				options.options
 				);
 			};
@@ -536,18 +537,14 @@ assign(builtInHelpers, {
 	"@index": atIndexHelper,
 	'switch': switchHelper,
 	eachOf: eachHelper,
-
-	/*'debugger': debuggerHelper,
-
-
-	index: indexHelper,
-
 	is: isHelper,
 	eq: isHelper,
-
-
-	console: console,
 	data: dataHelper,
+
+	/*'debugger': debuggerHelper,
+	index: indexHelper,
+	console: console,
+
 	domData: domDataHelper,
 
 	joinBase: joinBaseHelper,

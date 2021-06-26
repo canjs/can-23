@@ -592,6 +592,19 @@ var Component = Construct.extend(
 				});
 			}
 
+			// Setup simple helpers
+			canReflect.eachKey(this.simpleHelpers || {}, function(val, prop) {
+				//!steal-remove-start
+				if(options.helpers[prop]) {
+					can.dev.warn('Component ' + component.tag +
+					' already has a helper called ' + prop);
+				}
+				//!steal-remove-end
+				if (typeof val === "function") {
+					options.helpers[prop] = stache.makeSimpleHelper(val.bind(viewModel));
+				}
+			});
+
 			// #### `events` control
 			// TODO: remove in next release
 			// Create a control to listen to events

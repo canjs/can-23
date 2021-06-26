@@ -21,7 +21,7 @@ var makeDataBinding = function(node, bindingContext, bindingSettings){
 
 	var matches = node.value.match(bindingsRegExp);
 	if(matches) {
-		
+
 		updatedBindSettings.getSiblingBindingData = function(node, bindingSettings){
 
 			return {

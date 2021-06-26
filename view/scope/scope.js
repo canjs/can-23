@@ -91,6 +91,9 @@ var stacheHelpers = require("../helpers");
 				if(attr === "%root") {
 					return { value: this.getRoot() };
 				}
+				if(attr === "%element" || attr === "%event" || attr === "%viewModel") {
+					return this.getSpecial(attr.substr(1));
+				}
 
 				// Identify context based keys.  Context based keys try to
 				// specify a particular context a key should be within.
@@ -134,8 +137,12 @@ var stacheHelpers = require("../helpers");
 					return parent.read(attr.substr(3) || ".", options);
 				}
 				else if ( isCurrentContext ) {
+					var cur = this;
+					while(cur._meta.notContext || cur._meta.special) {
+						cur = cur._parent;
+					}
 					return {
-						value: canReflect.getValue( this._context )
+						value: canReflect.getValue( cur._context )
 					};
 				}
 
@@ -146,6 +153,15 @@ var stacheHelpers = require("../helpers");
 				} else {
 					return this._read(keyReads,options, currentScopeOnly);
 				}
+			},
+			getSpecial: function(specialAttr){
+				var cur = this;
+				while(!cur._meta.special) {
+					cur = cur._parent;
+				}
+				return {
+					value: cur._context[specialAttr]
+				};
 			},
 			// ## Scope.prototype._read
 			//
@@ -236,7 +252,9 @@ var stacheHelpers = require("../helpers");
 								scope: currentScope,
 								rootObserve: currentObserve,
 								value: data.value,
-								reads: currentReads
+								reads: currentReads,
+								thisArg: data.parent,
+								parentHasKey: data.parentHasKey
 							};
 						}
 						// Otherwise, save all observables that were read.  If no value

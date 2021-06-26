@@ -47,25 +47,34 @@ Helper.prototype.value = function(scope, helperOptions){
 		helperInstance = this,
 		// proxyMethods must be false so that the `requiresOptionsArgument` and any
 		// other flags stored on the function are preserved
-		helperFn = scope.computeData(methodKey,  { proxyMethods: false, doNotExecute: true, prioritizeHelpers: true }),
-		initialValue = helperFn && helperFn.initialValue,
-		thisArg = helperFn && helperFn.thisArg;
+		helperScopeKeyData = scope.computeData(methodKey,  { proxyMethods: false, doNotExecute: true, prioritizeHelpers: true }),
+		initialValue = helperScopeKeyData && helperScopeKeyData.initialValue,
+		thisArg = helperScopeKeyData && helperScopeKeyData.thisArg,
+		helperValueFn;
 
 	if (typeof initialValue === "function") {
-		helperFn = function helperFn() {
+		helperValueFn = function helperValueFn() {
 			var args = helperInstance.args(scope),
 				helperOptionArg = assign(assign({}, helperOptions), {
 					hash: helperInstance.hash(scope),
 					exprData: helperInstance
 				});
 
-			args.push(helperOptionArg);
+
+			// helper functions should NOT be part of some other object.
+			// so we don't add extra args if it looks like it's part of some other object.
+			if(initialValue.requiresOptionsArgument || !helperScopeKeyData.parentHasKey  ) {
+				args.push(helperOptionArg);
+			} else {
+				debugger;
+			}
+
 
 			return initialValue.apply(thisArg || scope.peek("this"), args);
 		};
 		//!steal-remove-start
 		if (process.env.NODE_ENV !== 'production') {
-			Object.defineProperty(helperFn, "name", {
+			Object.defineProperty(helperValueFn, "name", {
 				configurable: true,
 				value: canReflect.getName(this)
 			});
@@ -83,7 +92,7 @@ Helper.prototype.value = function(scope, helperOptions){
 	}
 	//!steal-remove-end
 
-	return  helperFn;
+	return  helperValueFn;
 };
 
 Helper.prototype.closingTag = function() {

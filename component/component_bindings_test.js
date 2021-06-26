@@ -122,7 +122,6 @@ steal("can", "can/map/define", "can/component", "can/view/stache" ,"can/route", 
 					// this is viewModel, not mustache
 					// consider removing viewModel as arg
 					isActive: function (panel) {
-						debugger;
 						return this.attr('active') === panel;
 					}
 				}

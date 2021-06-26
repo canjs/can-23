@@ -20,7 +20,8 @@ Lookup.prototype.value = function(scope, readOptions, helperOptions){
 		return scope.computeData(this.key, assign({
 			warnOnMissingKey: true,
 			callHelperFunction: true,
-			helperOptions: helperOptions
+			helperOptions: helperOptions,
+			args: [scope.attr("."), scope]
 		},readOptions));
 	}
 };

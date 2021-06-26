@@ -4368,7 +4368,6 @@ function skip(test) {
 					return "helperA value";
 				},
 				helperB: function(arg1, arg2, options){
-					debugger;
 					equal(arg1, 1, "static argument");
 					equal(arg2, "A", "scope argument");
 					equal(options.propA, "B", "scope hash");
@@ -4534,10 +4533,10 @@ function skip(test) {
 
 			equal( frag.firstChild.innerText, "false", "set to false");
 		});
-		return;
+
 		test('getHelper w/o optional options argument (#1497)', function() {
 			var options = can.stache.getHelper('each');
-			ok(typeof options.fn === 'function', 'each helper returned');
+			ok(typeof options === 'function', 'each helper returned');
 		});
 
 		test("methods don't update correctly (#1891)", function() {
@@ -4561,7 +4560,7 @@ function skip(test) {
 		test('eq called twice (#1931)', function() {
 			expect(1);
 
-			var oldIs = can.stache.getHelper('is').fn;
+			var oldIs = can.stache.getHelper('is');
 
 			can.stache.registerHelper('is', function() {
 				ok(true, 'comparator invoked');
@@ -4571,7 +4570,7 @@ function skip(test) {
 			var a = can.compute(0),
 			b = can.compute(0);
 
-			can.stache('{{eq a b}}')({ a: a, b: b });
+			can.stache('{{is a b}}')({ a: a, b: b });
 
 			can.batch.start();
 			a(1);
@@ -4591,10 +4590,12 @@ function skip(test) {
 		});
 
 		test("Re-evaluating a case in a switch (#1988)", function(){
-			var template = can.stache("{{#switch page}}{{#case 'home'}}<h1 id='home'>Home</h1>" +
-				"{{/case}}{{#case 'users'}}{{#if slug}}<h1 id='user'>User - {{slug}}</h1>" +
-				"{{else}}<h1 id='users'>Users</h1><ul><li>User 1</li><li>User 2</li>" +
-				"</ul>{{/if}}{{/case}}{{/switch}}");
+			var template = can.stache("{{#switch page}}"+
+					"{{#case 'home'}}<h1 id='home'>Home</h1>{{/case}}"+
+					"{{#case 'users'}}"+
+						"{{#if slug}}<h1 id='user'>User - {{slug}}</h1>" +
+						"{{else}}<h1 id='users'>Users</h1><ul><li>User 1</li><li>User 2</li></ul>{{/if}}"+
+					"{{/case}}{{/switch}}");
 
 			var map = new can.Map({
 				page: "home"
@@ -4602,14 +4603,15 @@ function skip(test) {
 
 			var frag = template(map);
 
-			equal(frag.firstChild.getAttribute("id"), "home", "'home' is the first item shown");
+			equal(frag.firstElementChild.getAttribute("id"), "home", "'home' is the first item shown");
 
 			map.attr("page", "users");
-			equal(frag.firstChild.nextSibling.getAttribute("id"), "users", "'users' is the item shown when the page is users");
+
+			equal(frag.firstElementChild.getAttribute("id"), "users", "'users' is the item shown when the page is users");
 
 
 			map.attr("slug", "Matthew");
-			equal(frag.firstChild.nextSibling.getAttribute("id"), "user", "'user' is the item shown when the page is users and there is a slug");
+			equal(frag.firstElementChild.getAttribute("id"), "user", "'user' is the item shown when the page is users and there is a slug");
 
 
 			can.batch.start();
@@ -4617,9 +4619,8 @@ function skip(test) {
 			map.removeAttr("slug");
 			can.batch.stop();
 
-			equal(frag.firstChild.getAttribute("id"), "home", "'home' is the first item shown");
-			equal(frag.firstChild.nextSibling.nodeType, 3, "the next sibling is a TextNode");
-			equal(frag.firstChild.nextSibling.nextSibling, undefined, "there are no more nodes");
+			equal(frag.firstElementChild.getAttribute("id"), "home", "'home' is the first item shown");
+
 		});
 
 		test("#each passed a method (2001)", function(){
@@ -4679,10 +4680,13 @@ function skip(test) {
 
 		test("%index content should be skipped by ../ (#1554)", function(){
 			var list = new can.List(["a","b"]);
+
 			var tmpl = can.stache('{{#each items}}<li>{{.././items.indexOf .}}</li>{{/each}}');
 			var frag = tmpl({items: list});
-			equal(frag.lastChild.firstChild.nodeValue, "1", "read indexOf");
+			console.log(frag);
+			equal(frag.firstElementChild.firstChild.nodeValue, "0", "read indexOf");
 		});
+		return;
 
 		test("rendering style tag (#2035)",function(){
 			var map = new can.Map({color: 'green'});

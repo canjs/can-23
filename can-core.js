@@ -11,6 +11,7 @@ var fragment = require("can-fragment");
 var domData = require("can-dom-data");
 var viewModel = require("can-view-model");
 var queues = require("can-queues");
+var jQuery = require("jquery");
 
 require("can-map-define");
 
@@ -41,7 +42,12 @@ stacheKey.valueReadersMap.function.read = function compatabilityRead(value, i, r
       return options.proxyMethods !== false ? value.bind(prev) : value;
     }
 	else if ( options.doNotExecute ) {
-		return sixRead.apply(this, arguments);
+		//if(reads.length > 1) {
+		//	return value.bind(prev);
+		//} else {
+			return sixRead.apply(this, arguments);
+		//}
+
 	} else {
 		return value.apply(prev, options.args || []);
 	}
@@ -166,7 +172,24 @@ var can23 = {
 		});
 		return target;
 	},
-	batch: queues.batch
+	batch: queues.batch,
+	Deferred: $.Deferred,
+	isPromise: function(obj){
+		return !!obj && (
+			(window.Promise && (obj instanceof Promise)) ||
+			(canReflect.isFunctionLike(obj.then) && (can23.List === undefined || !(obj instanceof can23.List)))
+		);
+	},
+	attr: {
+		set: function(target, attr, value){
+			target = can23.$(target);
+			target.forEach(function(targetNode, i){
+				mutateNode.setAttribute.call(targetNode, attr, value);
+			});
+			return target;
+
+		}
+	}
 };
 
 can23.scope = can23.viewModel;

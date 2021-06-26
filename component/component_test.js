@@ -9,7 +9,7 @@ var testUtils = require("../test-utils");
 require("./component");
 
 (function () {
-	
+
 	function skip(test) {
 		console.log("skip:", test);
 	}
@@ -85,7 +85,7 @@ require("./component");
 			}
 		});
 
-		skip("basic tabs", function () {
+		test("basic tabs", function () {
 
 			// new Tabs() ..
 			can.Component.extend({
@@ -132,7 +132,6 @@ require("./component");
 					// this is viewModel, not mustache
 					// consider removing viewModel as arg
 					isActive: function (panel) {
-						debugger;
 						return this.attr('active') === panel;
 					}
 				}
@@ -180,8 +179,6 @@ require("./component");
 				lis = testArea.getElementsByTagName("li");
 
 			equal(lis.length, 3, "three lis added");
-			console.log(testArea);
-			debugger;
 
 			foodTypes.each(function (type, i) {
 				equal(innerHTML(lis[i]), type.attr("title"), "li " + i + " has the right content");
@@ -216,8 +213,6 @@ require("./component");
 			foodTypes.each(function (type, i) {
 				equal( innerHTML(lis[i]), type.attr("title"), "li " + i + " has the right content (third check)");
 			});
-			console.log(testArea);
-			debugger;
 
 			// test changing the active element
 			var panels = testArea.getElementsByTagName("panel");
@@ -301,24 +296,24 @@ require("./component");
 
 		});
 
-		skip("treecombo", function () {
+		test("treecombo", function () {
 
 			can.Component.extend({
 				tag: "treecombo",
 				template: can.stache("<ul class='breadcrumb'>" +
-					"<li can-click='emptyBreadcrumb'>{{title}}</li>" +
+					"<li on:click='emptyBreadcrumb()'>{{title}}</li>" +
 					"{{#each breadcrumb}}" +
-					"<li can-click='updateBreadcrumb'>{{title}}</li>" +
+					"<li on:click='updateBreadcrumb(this)'>{{title}}</li>" +
 					"{{/each}}" +
 					"</ul>" +
 					"<ul class='options'>" +
 					"<content>" +
 					"{{#selectableItems}}" +
-					"<li {{#isSelected}}class='active'{{/isSelected}} can-click='toggle'>" +
+					"<li {{#isSelected}}class='active'{{/isSelected}} on:click='toggle(this)'>" +
 					"<input type='checkbox' {{#isSelected}}checked{{/isSelected}}/>" +
 					"{{title}}" +
 					"{{#if children.length}}" +
-					"<button class='showChildren' can-click='showChildren'>+</button>" +
+					"<button class='showChildren' on:click='showChildren(this, %element, %event)'>+</button>" +
 					"{{/if}}" +
 					"</li>" +
 					"{{/selectableItems}}" +
@@ -378,7 +373,7 @@ require("./component");
 				}
 			});
 
-			var template = can.stache("<treecombo items='{locations}' title='Locations'></treecombo>");
+			var template = can.stache("<treecombo items:bind='locations' title='Locations'></treecombo>");
 
 			var base = new can.Map({});
 
@@ -516,7 +511,7 @@ require("./component");
 
 		});
 
-		skip("deferred grid", function () {
+		test("deferred grid", function () {
 
 			// This test simulates a grid that reads a `deferreddata` property for
 			// items and displays them.
@@ -1656,12 +1651,10 @@ require("./component");
 	//	makeTest("can/component vdom", simpleDocument);
 	//}
 
-
-	return;
 	QUnit.module("can/component mustache");
 
 
-	asyncTest('(mu)stache integration', function(){
+	skip('(mu)stache integration', function(){
 
 		can.Component.extend({
 			tag: 'my-tagged',
@@ -1669,7 +1662,6 @@ require("./component");
 		});
 
 		var stache = can.stache("<my-tagged p1='v1' p2='{v2}' p3='{{v3}}'></my-tagged>");
-		var mustache = can.mustache("<my-tagged p1='v1' p2='{v2}' p3='{{v3}}'></my-tagged>");
 
 		var data = new can.Map({
 			v1: "value1",
@@ -1682,16 +1674,9 @@ require("./component");
 		var stacheFrag = stache(data),
 			stacheResult = stacheFrag.childNodes[0].innerHTML.split(",");
 
-		var mustacheFrag = mustache(data),
-			mustacheResult = mustacheFrag.childNodes[0].innerHTML.split(",");
-
 		equal(stacheResult[0], "v1", "stache uses attribute values");
 		equal(stacheResult[1], "value2", "stache single {} cross binds value");
 		equal(stacheResult[2], "value3", "stache  {{}} cross binds attribute");
-
-		equal(mustacheResult[0], "value1", "mustache looks up attribute values");
-		equal(mustacheResult[1], "value2", "mustache single {} cross binds value");
-		equal(mustacheResult[2], "value 3", "mustache  {{}} cross binds string value");
 
 		data.attr("v1","VALUE1");
 		data.attr("v2",new can.Map({val: "VALUE 2"}));
@@ -1699,25 +1684,18 @@ require("./component");
 		can.attr.set( stacheFrag.childNodes[0],"p4","value4");
 
 		stacheResult = stacheFrag.childNodes[0].innerHTML.split(",");
-		mustacheResult = mustacheFrag.childNodes[0].innerHTML.split(",");
 
 		equal(stacheResult[0], "v1", "stache uses attribute values so it should not change");
-		equal(mustacheResult[0], "VALUE1", "mustache looks up attribute values and updates immediately");
+
 		equal(stacheResult[1], "VALUE 2", "stache single {} cross binds value and updates immediately");
-		equal(mustacheResult[1], "VALUE 2", "mustache single {} cross binds value and updates immediately");
 
 		equal(stacheResult[2], "value3", "stache {{}} cross binds attribute changes so it wont be updated immediately");
 
 		setTimeout(function(){
 
 			stacheResult = stacheFrag.childNodes[0].innerHTML.split(",");
-			mustacheResult = mustacheFrag.childNodes[0].innerHTML.split(",");
 			equal(stacheResult[2], "VALUE3", "stache  {{}} cross binds attribute");
-
-			equal(mustacheResult[2], "VALUE 3", "mustache sticks with old value even though property has changed");
-
 			equal(stacheResult[3], "value4", "stache sees new attributes");
-
 			start();
 		},20);
 
@@ -1730,137 +1708,30 @@ require("./component");
 			template: can.stache('<div>click me</div>'),
 			events: {
 				init: function(){
+					//console.log("init")
 					this.on("div", 'click', 'doSomethingfromInit');
 				},
 				inserted: function(){
+					//console.log("inserted")
 					this.on("div", 'click', 'doSomethingfromInserted');
 				},
 				doSomethingfromInserted: function(){
+					//console.log("doSomethingfromInserted")
 					ok(true, "bound in inserted");
 				},
 				doSomethingfromInit: function(){
+					//console.log("doSomethingfromInit")
 					ok(true, "bound in init");
 				}
 			}
 		});
 		can.append( can.$("#qunit-fixture"), can.stache("<app-foo></app-foo>")({}));
-		can.trigger(can.$('#qunit-fixture div'), 'click');
-	});
+		canDomMutate.flushRecords();
 
-	test("attach events on init", function(){
-		expect(2);
-		can.Component.extend({
-			tag: 'app-foo',
-			template: can.stache('<div>click me</div>'),
-			events: {
-				init: function(){
-					this.on("div", 'click', 'doSomethingfromInit');
-				},
-				inserted: function(){
-					this.on("div", 'click', 'doSomethingfromInserted');
-				},
-				doSomethingfromInserted: function(){
-					ok(true, "bound in inserted");
-				},
-				doSomethingfromInit: function(){
-					ok(true, "bound in init");
-				}
-			}
-		});
-		can.append( can.$("#qunit-fixture"), can.stache("<app-foo></app-foo>")({}));
 		can.trigger(can.$('#qunit-fixture div'), 'click');
 	});
 
 	if(can.isFunction(Object.keys)) {
-		test('<content> node list cleans up properly as direct child (#1625, #1627)', 2, function() {
-			var size = Object.keys(can.view.nodeLists.nodeMap).length;
-			var items = [];
-			var viewModel = new can.Map({
-				show: false
-			});
-			var toggle = function() {
-				viewModel.attr('show', !viewModel.attr('show'));
-			};
-
-			for (var i = 0; i < 100; i++) {
-				items.push({
-					// Random 5 character String
-					name: Math.random().toString(36)
-						.replace(/[^a-z]+/g, '').substr(0, 5)
-				});
-			}
-
-			can.Component.extend({
-				tag: 'grandparent-component',
-				template: can.stache('{{#if show}}<parent-component></parent-component>{{/if}}'),
-				scope: viewModel
-			});
-
-			can.Component.extend({
-				tag: 'parent-component',
-				template: can.stache('{{#items}}<child-component>\n:)\n</child-component>{{/items}}'),
-				scope: {
-					items: items
-				}
-			});
-
-			can.Component.extend({
-				tag: 'child-component',
-				template: can.stache('<div>\n<content/>\n</div>')
-			});
-
-			can.append(can.$("#qunit-fixture"), can.stache('<grandparent-component></grandparent-component>')());
-
-			toggle();
-			equal(Object.keys(can.view.nodeLists.nodeMap).length - size, 0,
-				'No new items added to nodeMap');
-
-			toggle();
-			equal(Object.keys(can.view.nodeLists.nodeMap).length - size, 0,
-				'No new items added to nodeMap');
-
-			can.remove(can.$("#qunit-fixture>*"));
-		});
-
-		asyncTest('<content> node list cleans up properly, directly nested (#1625, #1627)', function() {
-
-			can.Component.extend({
-				tag: 'parent-component',
-				template: can.stache('{{#items}}<child-component>{{parentAttrInContent}}</child-component>{{/items}}'),
-				scope: {
-					items: [{parentAttrInContent: 0},{parentAttrInContent: 1} ]
-				}
-			});
-
-			can.Component.extend({
-				tag: 'child-component',
-				template: can.stache('<div>{{#if bar}}<content/>{{/if}}</div>'),
-				scope: {
-					bar: true
-				}
-			});
-
-			can.append(can.$("#qunit-fixture"), can.stache('<parent-component/>')());
-
-			var old = can.unbindAndTeardown;
-			var count = 0;
-			can.unbindAndTeardown = function(name) {
-				if(name === 'parentAttrInContent') {
-					count++;
-				}
-				return old.call(this, arguments);
-			};
-
-			can.remove(can.$("#qunit-fixture>*"));
-
-			// Dispatches async
-			setTimeout(function() {
-				equal(count, 2, '2 items unbound. Previously, this would unbind 4 times because of switching to fast path');
-				can.unbindAndTeardown = old;
-
-				start();
-			}, 20);
-		});
 
 		test("components control destroy method is called", function(){
 			expect(0);
@@ -1874,36 +1745,10 @@ require("./component");
 				}
 			});
 			can.append(can.$("#qunit-fixture"), can.stache("<comp-control-destroy-test></comp-control-destroy-test>")({}));
+			canDomMutate.flushRecords();
 			can.remove(can.$("#qunit-fixture>*"));
+			canDomMutate.flushRecords();
 			can.trigger(can.$(document), 'click');
-		});
-
-		test("<content> tag doesn't leak memory", function(){
-
-			can.Component.extend({
-				tag: 'my-viewer',
-				template: can.stache('<div><content /></div>')
-			});
-
-			var template = can.stache('{{#show}}<my-viewer>{{value}}</my-viewer>{{/show}}');
-
-			var map = new can.Map({show: true, value: "hi"});
-
-			can.append(can.$("#qunit-fixture"), template(map));
-
-			map.attr("show", false);
-			map.attr("show", true);
-			map.attr("show", false);
-			map.attr("show", true);
-			map.attr("show", false);
-			map.attr("show", true);
-			map.attr("show", false);
-			stop();
-			setTimeout(function(){
-				equal(map._bindings,1, "only one binding");
-				can.remove(can.$("#qunit-fixture>*"));
-				start();
-			},10);
 
 		});
 
@@ -1943,7 +1788,10 @@ require("./component");
 			}
 		});
 		can.append(can.$("#qunit-fixture"), can.stache("<page-element></page-element>")());
+		canDomMutate.flushRecords();
 		can.remove(can.$("#qunit-fixture>*"));
+		canDomMutate.flushRecords();
+
 		map.attr("value", 2);
 
 		equal(count, 0, "Event handler should NOT be called since the element was removed.");

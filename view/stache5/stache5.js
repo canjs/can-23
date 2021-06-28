@@ -578,6 +578,8 @@ stache.from = mustacheCore.getTemplateById = function(id){
 stache.registerPartial = function(id, partial) {
 	templates[id] = (typeof partial === "string" ? stache(partial) : partial);
 };
+can23.view.registerView = stache.registerPartial;
+
 stache.registerSimpleHelper = mustacheHelpers.addHelper;
 stache.registerHelper = mustacheHelpers.addLiveHelper;
 

@@ -637,7 +637,7 @@ function skip(test) {
 			deepEqual(getText(t.template,t.data), t.expected);
 		});
 
-		skip("Partials correctly set context", function () {
+		test("Partials correctly set context", function () {
 			var t = {
 				template: "{{#users}}{{>partial}}{{/users}}",
 				expected: "foo - bar",
@@ -1699,7 +1699,7 @@ function skip(test) {
 		});
 
 		// https://github.com/canjs/canjs/issues/227
-		skip("Contexts are not always passed to partials properly", function () {
+		test("Contexts are not always passed to partials properly", function () {
 			can.view.registerView('inner', '{{#if other_first_level}}{{other_first_level}}{{else}}{{second_level}}{{/if}}')
 
 			var renderer = can.stache('{{#first_level}}<span>{{> inner}}</span> should equal <span>{{other_first_level}}</span>{{/first_level}}'),
@@ -2063,7 +2063,7 @@ function skip(test) {
 		});
 
 		// Issue #288
-		skip("Data helper should set proper data instead of a context stack", function () {
+		test("Data helper should set proper data instead of a context stack", function () {
 			var partials = {
 				'nested_data': '<span id="has_data" {{data "attr"}}></span>',
 				'nested_data2': '{{#this}}<span id="has_data" {{data "attr"}}></span>{{/this}}',
@@ -2073,9 +2073,9 @@ function skip(test) {
 				can.view.registerView(name, partials[name])
 			}
 
-			var renderer = can.stache("{{#bar}}{{> #nested_data}}{{/bar}}"),
-				renderer2 = can.stache("{{#bar}}{{> #nested_data2}}{{/bar}}"),
-				renderer3 = can.stache("{{#bar}}{{> #nested_data3}}{{/bar}}"),
+			var renderer = can.stache("{{#bar}}{{> nested_data}}{{/bar}}"),
+				renderer2 = can.stache("{{#bar}}{{> nested_data2}}{{/bar}}"),
+				renderer3 = can.stache("{{#bar}}{{> nested_data3}}{{/bar}}"),
 				div = doc.createElement('div'),
 				data = new can.Map({
 					foo: "bar",
@@ -2087,7 +2087,8 @@ function skip(test) {
 
 			div.appendChild(renderer(data));
 			span = can.$(div.getElementsByTagName('span')[0]);
-			strictEqual(can.data(span, 'attr'), data.bar, 'Nested data 1 should have correct data');
+			var domData = can.data(span, 'attr');
+			strictEqual(domData, data.bar, 'Nested data 1 should have correct data');
 
 			div = doc.createElement('div');
 			div.appendChild(renderer2(data));

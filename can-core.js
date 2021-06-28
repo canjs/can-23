@@ -189,7 +189,8 @@ var can23 = {
 			return target;
 
 		}
-	}
+	},
+	view: {}
 };
 
 can23.scope = can23.viewModel;

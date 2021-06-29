@@ -12,6 +12,7 @@ var domData = require("can-dom-data");
 var viewModel = require("can-view-model");
 var queues = require("can-queues");
 var jQuery = require("jquery");
+var viewCallbacks = require("can-view-callbacks");
 
 require("can-map-define");
 
@@ -190,7 +191,14 @@ var can23 = {
 
 		}
 	},
-	view: {}
+	view: {
+		tag: function(){
+			return viewCallbacks.tag.apply(viewCallbacks, arguments);
+		},
+		attr: function(){
+			return viewCallbacks.attr.apply(viewCallbacks, arguments);
+		}
+	}
 };
 
 can23.scope = can23.viewModel;

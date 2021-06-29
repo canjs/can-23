@@ -3482,15 +3482,13 @@ function skip(test) {
 
 		});
 
-		skip("can.view.tag", function(){
+		test("can.view.tag", function(){
 
-			expect(4);
+			expect(2);
 
 			can.view.tag("stache-tag", function(el, tagData){
 				ok(tagData.scope instanceof can.view.Scope, "got scope");
-				ok(tagData.options instanceof can.view.Scope, "got options");
-				equal(typeof tagData.subtemplate, "function", "got subtemplate");
-				var frag = tagData.subtemplate(tagData.scope.add({last: "Meyer"}), tagData.options);
+				var frag = tagData.subtemplate( tagData.scope.add({last: "Meyer"}) );
 
 				equal( innerHTML(frag.firstChild), "Justin Meyer", "rendered right");
 			});
@@ -3501,13 +3499,12 @@ function skip(test) {
 
 		});
 
-		skip("can.view.attr", function(){
+		test("can.view.attr", function(){
 
-			expect(3);
+			expect(2);
 
 			can.view.attr("stache-attr", function(el, attrData){
 				ok(attrData.scope instanceof can.view.Scope, "got scope");
-				ok(attrData.options instanceof can.view.Scope, "got options");
 				equal(attrData.attributeName, "stache-attr", "got attribute name");
 
 			});
@@ -3549,7 +3546,7 @@ function skip(test) {
 			equal( innerHTML(spans[1]), "stache-stache", "found in current level" );
 		});
 
-		skip("self closing tags callback custom tag callbacks (#880)", function(){
+		test("self closing tags callback custom tag callbacks (#880)", function(){
 
 			can.view.tag("stache-tag", function(el, tagData){
 				ok(true,"tag callback called");
@@ -3565,7 +3562,7 @@ function skip(test) {
 
 		});
 
-		skip("empty custom tags do not have a subtemplate (#880)", function(){
+		test("empty custom tags do not have a subtemplate (#880)", function(){
 
 			can.view.tag("stache-tag", function(el, tagData){
 				ok(true,"tag callback called");
@@ -3672,7 +3669,7 @@ function skip(test) {
 			equal(innerHTML(frag.children[2]), '', 'Context is set correctly for falsy values');
 		});
 
-		skip("Custom elements created with default namespace in IE8", function(){
+		test("Custom elements created with default namespace in IE8", function(){
 			// Calling can.view.tag so that this tag is shived
 			can.view.tag('my-tag', function(){});
 
@@ -3685,9 +3682,9 @@ function skip(test) {
 				"Element created in default namespace");
 		});
 
-		skip("Partials are passed helpers (#791)", function () {
+		test("Partials are passed helpers (#791)", function () {
 			var t = {
-					template: "{{>partial}}",
+					template: "<div>{{>partial}}</div>",
 					expected: "foo",
 					partials: {
 						partial: '{{ help }}'
@@ -3704,7 +3701,7 @@ function skip(test) {
 			}
 
 			frag = can.stache(t.template)({}, t.helpers);
-			equal(frag.firstChild.nodeValue, t.expected);
+			equal(frag.firstElementChild.innerText, t.expected);
 		});
 
 		test("{{else}} with {{#unless}} (#988)", function(){
@@ -3837,7 +3834,7 @@ function skip(test) {
 			equal(innerHTML(frag.firstChild), "bar", "correct innerHTMl");
 		});
 
-		skip("Passing Partial set in options (#1388 and #1389). Support live binding of partial", function () {
+		test("Passing Partial set in options (#1388 and #1389). Support live binding of partial", function () {
 			var data = new can.Map({
 				name: "World",
 				greeting: "hello"
@@ -3939,7 +3936,7 @@ function skip(test) {
 
 		});
 
-		skip("old promises work (#179)", function(){
+		test("old promises work (#179)", function(){
 
 			var template = can.stache(
 				"{{#if promise.isPending}}<span class='pending'></span>{{/if}}"+
@@ -4010,7 +4007,7 @@ function skip(test) {
 
 		});
 
-		skip("promises are not rebound (#1572)", function(){
+		test("promises are not rebound (#1572)", function(){
 			stop();
 			var d = new can.Deferred();
 
@@ -4252,18 +4249,18 @@ function skip(test) {
 			state.attr('parent.child', 'bar');
 		});
 
-		skip("Using a renderer function as a partial", function(){
-			var template = can.stache("{{> other}}");
+		test("Using a renderer function as a partial", function(){
+			var template = can.stache("<div>{{> other}}</div>");
 			var partial = can.stache("hello there");
 			var map = new can.Map({ other: null });
 
 			var frag = template(map);
 
-			equal(frag.firstChild.nodeValue, "", "Initially it is a blank textnode");
+			equal(frag.firstChild.innerText, "", "Initially it is a blank textnode");
 
 			map.attr("other", partial);
 
-			equal(frag.firstChild.nodeValue, "hello there", "partial rendered");
+			equal(frag.firstChild.innerText, "hello there", "partial rendered");
 		});
 
 		test("Handlebars helper: switch/case", function() {
@@ -4335,12 +4332,11 @@ function skip(test) {
 			equal(frag.firstChild.nodeValue, "http://foocdn.com/hello/world", "relative lookup works");
 		});
 
-		skip('Custom attribute callbacks are called when in a conditional within a live section', 8, function () {
+		test('Custom attribute callbacks are called when in a conditional within a live section', 6, function () {
 			can.view.attr('test-attr', function(el, attrData) {
 				ok(true, "test-attr called");
 				equal(attrData.attributeName, 'test-attr', "attributeName set correctly");
 				ok(attrData.scope, "scope isn't undefined");
-				ok(attrData.options, "options isn't undefined");
 			});
 
 			var state = new can.Map({
@@ -4776,20 +4772,20 @@ function skip(test) {
 			data.attr('items').pop();
 		});
 
-		skip("partials should leave binding to helpers and properties (#2174)", function() {
+		test("partials should leave binding to helpers and properties (#2174)", function() {
 			can.view.registerView('test', '<input id="one"> {{name}}');
-			var renderer = can.stache('{{#each items}}{{>test}}{{/each}}');
+			var renderer = can.stache('<div>{{#each items}}{{>test}}{{/each}}</div>');
 
 			var data = new can.Map({ items: [] });
 			var frag = renderer(data);
 			data.attr('items').splice(0, 0, {name: 'bob'});
 
 			// simulate the user entering text
-			frag.firstChild.nextSibling.setAttribute('value', 'user text');
+			frag.firstChild.getElementsByTagName("input")[0].setAttribute('value', 'user text');
 			// re-render the partial for the 0th element
 			data.attr('items.0.name', 'dave');
 
-			equal(frag.firstChild.nextSibling.getAttribute('value'), 'user text');
+			equal(frag.firstChild.getElementsByTagName("input")[0].getAttribute('value'), 'user text');
         });
 
 		test("nested switch statement fail (#2188)", function(){
@@ -4884,7 +4880,7 @@ function skip(test) {
 		});
 
 
-		skip("content within {{#if}} inside partial surrounded by {{#if}} should not display outside partial (#2186)", function() {
+		test("content within {{#if}} inside partial surrounded by {{#if}} should not display outside partial (#2186)", function() {
 			can.view.registerView('partial', '{{#showHiddenSection}}<div>Hidden</div>{{/showHiddenSection}}');
 			var renderer = can.stache('<div>{{#showPartial}}{{>partial}}{{/showPartial}}</div>');
 			var data = new can.Map({

@@ -202,7 +202,8 @@ var can23 = {
 			return viewCallbacks.attr.apply(viewCallbacks, arguments);
 		}
 	},
-	deparam: deparam
+	deparam: deparam,
+	makeArray: canReflect.toArray
 };
 
 window.can = can23;

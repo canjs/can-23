@@ -14,6 +14,7 @@ var queues = require("can-queues");
 var jQuery = require("jquery");
 var viewCallbacks = require("can-view-callbacks");
 var assign = require("can-assign");
+var deparam = require("can-deparam");
 
 require("can-map-define");
 
@@ -200,9 +201,11 @@ var can23 = {
 		attr: function(){
 			return viewCallbacks.attr.apply(viewCallbacks, arguments);
 		}
-	}
+	},
+	deparam: deparam
 };
 
+window.can = can23;
 can23.scope = can23.viewModel;
 
 module.exports = can23;

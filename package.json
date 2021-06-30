@@ -14,6 +14,7 @@
     "can-bind": "^1.5.1",
     "can-compute": "^4.1.1",
     "can-construct": "^3.5.6",
+    "can-construct-super": "^3.2.1",
     "can-define": "^2.8.0",
     "can-define-lazy-value": "^1.1.1",
     "can-dom-data": "^1.0.3",
@@ -27,6 +28,7 @@
     "can-list": "^4.2.2",
     "can-log": "^1.0.2",
     "can-map": "^4.3.13",
+    "can-map-backup": "^4.0.0",
     "can-map-define": "^4.4.0",
     "can-model": "^4.1.0",
     "can-namespace": "^1.0.0",
@@ -54,8 +56,8 @@
     "steal-config-utils": "^1.0.0",
     "steal-qunit": "^1.0.0"
   },
-  "steal" : {
-	"ext": {
+  "steal": {
+    "ext": {
       "stache": "can-23/view/stache/system"
     }
   }

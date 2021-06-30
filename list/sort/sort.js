@@ -1,1 +1,1 @@
-module.exports = require("can-list-sort");
+console.warn("can-list-sort is not supported")

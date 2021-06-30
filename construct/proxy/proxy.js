@@ -1,1 +1,1 @@
-module.exports = require("can-construct-proxy");
+console.warn("this doesn't work yet")

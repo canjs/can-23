@@ -13,6 +13,7 @@ var viewModel = require("can-view-model");
 var queues = require("can-queues");
 var jQuery = require("jquery");
 var viewCallbacks = require("can-view-callbacks");
+var assign = require("can-assign");
 
 require("can-map-define");
 
@@ -85,6 +86,7 @@ stacheKey.propertyReadersMap.object.read = function compatabilityObjectRead(valu
 
 
 var can23 = {
+  extend: assign,
   Map: Map,
   compute: compute,
   each: canReflect.each,

@@ -16,7 +16,8 @@ var viewCallbacks = require("can-view-callbacks");
 var assign = require("can-assign");
 var deparam = require("can-deparam");
 var keyWalk = require("can-key/walk/walk");
-var keyUtils = require("can-key/utils")
+var keyUtils = require("can-key/utils");
+var canString = require("can-string");
 
 require("can-map-define");
 
@@ -228,7 +229,10 @@ var can23 = {
 		}
 	},
 	deparam: deparam,
-	makeArray: canReflect.toArray
+	makeArray: canReflect.toArray,
+	camelize: canString.camelize,
+	hyphenate: canString.hyphenate,
+	capitalize: canString.capitalize
 };
 
 window.can = can23;

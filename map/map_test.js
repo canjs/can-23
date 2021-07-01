@@ -7,12 +7,15 @@ var can = require("can-23");
 
 	QUnit.module('can/map');
 
-	test("Basic Map", 4, function () {
+	test("Basic Map", 6, function () {
 
 		var state = new can.Map({
 			category: 5,
 			productType: 4
 		});
+
+		equal(state.category, 5, "can read properties directly");
+		equal(state.attr("productType"), 4, "can read properties from attr");
 
 		state.bind("change", function (ev, attr, how, val, old) {
 			equal(attr, "category", "correct change name");

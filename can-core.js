@@ -237,7 +237,8 @@ var can23 = {
 };
 
 jQuery.fn.viewModel = function(attr, value){
-	return can23.viewModel(this[0], attr, value)
+	var args = [this[0]].concat( [].slice.call(arguments, 0 ));
+	return can23.viewModel.apply(can23, args);
 }
 
 window.can = can23;

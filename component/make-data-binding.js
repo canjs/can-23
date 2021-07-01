@@ -16,6 +16,7 @@ function removeBrackets(value, open, close){
 	return value;
 }
 
+
 var makeDataBinding = function(node, bindingContext, bindingSettings){
 	var updatedBindSettings = assign({},bindingSettings);
 

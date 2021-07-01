@@ -15,6 +15,8 @@ var jQuery = require("jquery");
 var viewCallbacks = require("can-view-callbacks");
 var assign = require("can-assign");
 var deparam = require("can-deparam");
+var keyWalk = require("can-key/walk/walk");
+var keyUtils = require("can-key/utils")
 
 require("can-map-define");
 
@@ -83,6 +85,29 @@ stacheKey.propertyReadersMap.object.read = function compatabilityObjectRead(valu
   } else {
     return baseObjectRead.apply(this, arguments);
   }
+};
+
+var CanJSNames = {Control: 1, LetContext: 1, DefineList: 1};
+var constrctorCreated = Construct._created;
+Construct._created = function(className, Constructor){
+
+
+	if(className && !CanJSNames[className]) {
+		var parts = keyUtils.parts(className)
+		keyWalk(window, parts , function(keyInfo, i){
+			if(i === parts.length - 1) {
+				canReflect.setKeyValue(keyInfo.parent, keyInfo.key, Constructor)
+			}
+			else if(!canReflect.isMapLike(keyInfo.value)) {
+				var newVal = {}
+				canReflect.setKeyValue(keyInfo.parent, keyInfo.key, newVal)
+				return newVal;
+			}
+		});
+		Constructor.shortName = parts[parts.length - 1];
+		Constructor.fullName = className;
+	}
+
 }
 
 

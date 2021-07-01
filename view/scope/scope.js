@@ -10,6 +10,7 @@ var ObservationRecorder = require("can-observation-recorder");
 var canReflect = require("can-reflect");
 var defineLazyValue = require('can-define-lazy-value');
 var stacheHelpers = require("../helpers");
+var jQuery = require("jquery");
 		/**
 		 * @add can.view.Scope
 		 */
@@ -90,6 +91,12 @@ var stacheHelpers = require("../helpers");
 				// If it's the root, jump right to it.
 				if(attr === "%root") {
 					return { value: this.getRoot() };
+				}
+				if(attr === "%jQueryElement") {
+					return {
+						value: jQuery( this.getSpecial("") )
+					}
+
 				}
 				if(attr === "%element" || attr === "%event" || attr === "%viewModel") {
 

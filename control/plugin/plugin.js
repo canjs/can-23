@@ -101,8 +101,7 @@ require("../control");
 				controls, c;
 			//check if arguments
 			this.each(function () {
-				controls = can.$(this)
-					.data('controls');
+				controls = can.data(this, 'controls');
 				if (!controls) {
 					return;
 				}
@@ -150,7 +149,7 @@ require("../control");
 					returns;
 				this.each(function () {
 					//check if created
-					var plugin = can.$(this)
+					var plugin = $(this)
 						.control(control);
 					if (plugin) {
 						if (isMethod) {

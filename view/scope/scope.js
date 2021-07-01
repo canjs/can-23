@@ -2,7 +2,7 @@
 //
 // This allows you to define a lookup context and parent contexts that a key's value can be retrieved from.
 // If no parent scope is provided, only the scope's context will be explored for values.
-var can = require("can-23");
+var can = require("../../can-core");
 var makeComputeData = require("./compute_data");
 var assign = require("can-assign");
 var TemplateContext = require('can-view-scope/template-context');

@@ -24,7 +24,7 @@ var Scope = require("../scope/scope");
 var TemplateContext = require("can-view-scope/template-context");
 var ObservationRecorder = require('can-observation-recorder');
 var canSymbol = require("can-symbol");
-var can23 = require("../../can-23");
+var can23 = require("../../can-core");
 // Make sure that we can also use our modules with Stache as a plugin
 
 require('can-view-target');

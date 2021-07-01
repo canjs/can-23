@@ -119,8 +119,12 @@ var Control = Construct.extend("Control",
             var Control = this;
 			function controlMethod() {
 				var wrapped = Control.wrapElement(this);
+				var args = slice.call(arguments, 0);
+				if (args.length === 1 && args[0].data) {
+					args = args.concat(args[0].data);
+				}
 				context.called = name;
-				return method.apply(context, [wrapped].concat(slice.call(arguments, 0)));
+				return method.apply(context, [wrapped].concat(args));
 			}
       //!steal-remove-start
       if(process.env.NODE_ENV !== 'production') {

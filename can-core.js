@@ -12,12 +12,9 @@ var domData = require("can-dom-data");
 var viewModel = require("can-view-model");
 var queues = require("can-queues");
 var jQuery = require("jquery");
-var viewCallbacks = require("can-view-callbacks");
 var assign = require("can-assign");
-var deparam = require("can-deparam");
 var keyWalk = require("can-key/walk/walk");
 var keyUtils = require("can-key/utils");
-var canString = require("can-string");
 
 require("can-map-define");
 
@@ -27,44 +24,13 @@ canReflect.assignSymbols(TemplateContext,{
 		return TemplateContext.apply(instance , arguments);
 	}
 });
+compute.read = stacheKey;
+compute.set = stacheKey.set;
 
 //var each = require("can-util/js/each/each");
 
 List.prototype.each = List.prototype.forEach;
 
-// The following overwrites function reading to behave like 2.3 value reading if `can23Compatibility` is set
-compute.read = stacheKey;
-compute.set = stacheKey.set;
-var sixRead = stacheKey.valueReadersMap.function.read;
-stacheKey.valueReadersMap.function.read = function compatabilityRead(value, i, reads, options, state, prev){
-  if(options.can23Compatibility ) {
-    if( isAt(i, reads) ) {
-      return i === reads.length ? value.bind(prev) : value;
-    }
-    else if(options.callMethodsOnObservables && canReflect.isObservableLike(prev)) {
-      return value.apply(prev, options.args || []);
-    }
-    else if ( options.isArgument && i === reads.length ) {
-      return options.proxyMethods !== false ? value.bind(prev) : value;
-    }
-	else if ( options.doNotExecute ) {
-		//if(reads.length > 1) {
-		//	return value.bind(prev);
-		//} else {
-			return sixRead.apply(this, arguments);
-		//}
-
-	} else {
-		return value.apply(prev, options.args || []);
-	}
-  } else {
-    return sixRead.apply(this, arguments);
-  }
-}
-function isAt(index, reads) {
-  var prevRead = reads[index-1];
-  return prevRead && prevRead.at;
-}
 var specialRead = {index: true, key: true, event: true, element: true, viewModel: true};
 var baseObjectRead = stacheKey.propertyReadersMap.object.read;
 stacheKey.propertyReadersMap.object.read = function compatabilityObjectRead(value, prop, reads, options, state, prev){
@@ -111,7 +77,6 @@ Construct._created = function(className, Constructor){
 
 }
 
-
 var can23 = {
   extend: assign,
   Map: Map,
@@ -124,7 +89,6 @@ var can23 = {
     return arr && arr[arr.length - 1];
   },
   Construct: Construct,
-  view: {},
   List: List,
   global: window,
 	$: function(selector) {
@@ -156,13 +120,13 @@ var can23 = {
 
 		return content;
 	},
-	trigger: function(target, event){
+	trigger: function(target, event, data){
 		target = can23.$(target);
 		target.forEach(function(targetNode, i){
 			if(typeof targetNode.dispatch === "function") {
 				targetNode.dispatch(event);
 			} else {
-				domEvents.dispatch(targetNode, event);
+				domEvents.dispatch(targetNode, { type: event, data: data });
 			}
 
 		});
@@ -220,25 +184,22 @@ var can23 = {
 
 		}
 	},
-	view: {
-		tag: function(){
-			return viewCallbacks.tag.apply(viewCallbacks, arguments);
-		},
-		attr: function(){
-			return viewCallbacks.attr.apply(viewCallbacks, arguments);
-		}
+	view: function(id, data) {
+		var stache = require("./view/stache/stache")
+		return stache.from(id)(data);
 	},
-	deparam: deparam,
-	makeArray: canReflect.toArray,
-	camelize: canString.camelize,
-	hyphenate: canString.hyphenate,
-	capitalize: canString.capitalize,
 	ajax: $.ajax
 };
 
 jQuery.fn.viewModel = function(attr, value){
 	var args = [this[0]].concat( [].slice.call(arguments, 0 ));
 	return can23.viewModel.apply(can23, args);
+}
+jQuery.fn.trigger = function(event, args) {
+	this.each(function(_, el) {
+		can23.trigger(el, event, args);
+	});
+	return this;
 }
 
 window.can = can23;

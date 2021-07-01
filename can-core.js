@@ -236,6 +236,10 @@ var can23 = {
 	ajax: $.ajax
 };
 
+jQuery.fn.viewModel = function(attr, value){
+	return can23.viewModel(this[0], attr, value)
+}
+
 window.can = can23;
 can23.scope = can23.viewModel;
 

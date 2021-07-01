@@ -232,7 +232,8 @@ var can23 = {
 	makeArray: canReflect.toArray,
 	camelize: canString.camelize,
 	hyphenate: canString.hyphenate,
-	capitalize: canString.capitalize
+	capitalize: canString.capitalize,
+	ajax: $.ajax
 };
 
 window.can = can23;

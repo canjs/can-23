@@ -1,4 +1,4 @@
-var Map = require("can-map");
+var Map = require("./map/map");
 var compute = require("can-compute");
 var canReflect = require("can-reflect");
 var Construct = require("can-construct");

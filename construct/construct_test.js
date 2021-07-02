@@ -75,9 +75,9 @@ var QUnit = require("steal-qunit");
 		ok(Foo.Bar === fb, 'returns class');
 		equal(fb.shortName, 'Bar', 'short name is right');
 		//!steal-remove-start
-		if (can.dev && fb.name) {
-			equal(fb.name, 'Bar', 'short name is right');
-		}
+		//if (can.dev && fb.name) {
+		//	equal(fb.name, 'Bar', 'short name is right');
+		//}
 		//!steal-remove-end
 
 		equal(fb.fullName, 'Foo.Bar', 'fullName is right');

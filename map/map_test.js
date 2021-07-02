@@ -186,6 +186,8 @@ var can = require("can-23");
 		equal(test.attr('my.newCount'), 1, 'falsey (1) value accessed correctly');
 	});
 
+
+
 	skip("computed properties don't cause memory leaks", function () {
 		var computeMap = can.Map.extend({
 			'name': can.compute(function(){
@@ -205,6 +207,19 @@ var can = require("can-23");
 		equal(map._computedAttrs.name.count, 0, '0 handlers listening to computed property');
 
 	});
+
+	test("computed properties work", function(){
+		var ComputeMap = can.Map.extend({
+			'name': can.compute(function(){
+				return this.attr('first') + this.attr('last')
+			})
+		})
+
+		var a = new ComputeMap({first: "j", last: "m"});
+		equal(a.attr("name"), "jm");
+		var b = new ComputeMap({first: "b", last: "m"});
+		equal(b.attr("name"), "bm");
+	})
 
 	test("serializing cycles", function(){
 		var map1 = new can.Map({name: "map1"});

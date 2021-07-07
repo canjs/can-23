@@ -78,19 +78,31 @@ Construct._created = function(className, Constructor){
 }
 
 var can23 = {
-  extend: assign,
-  Map: Map,
-  compute: compute,
-  each: canReflect.each,
-  inArray: function(item, array, fromIndex) {
-    return array.indexOf(item, fromIndex);
-  },
-  last: function(arr){
-    return arr && arr[arr.length - 1];
-  },
-  Construct: Construct,
-  List: List,
-  global: window,
+	extend: assign,
+	Map: Map,
+	compute: compute,
+	each: function (object, callback, context) {
+		var args = [
+			object,
+			function(val, key, obj) {
+				// preserve legacy behavior of each on Maps
+				if (!(obj instanceof Map) || canReflect.hasOwnKey(obj, key)) {
+					callback.call(context || obj, val, key, obj);
+				}
+			},
+			context
+		];
+		return canReflect.each.apply(this, args);
+	},
+	inArray: function(item, array, fromIndex) {
+		return array.indexOf(item, fromIndex);
+	},
+	last: function(arr){
+		return arr && arr[arr.length - 1];
+	},
+	Construct: Construct,
+	List: List,
+	global: window,
 	$: function(selector) {
 		if(typeof selector === "string") {
 			return document.querySelectorAll(selector);

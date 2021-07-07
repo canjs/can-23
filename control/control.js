@@ -7,7 +7,7 @@
 // ## helpers
 
 var Construct = require("can-construct");
-var can = require("can-23");
+var can = require("../can-core");
 var assign = require("can-assign");
 var observeReader = require("can-stache-key");
 var canReflect = require("can-reflect");
@@ -61,11 +61,18 @@ var bind = function (el, ev, callback, queue) {
 	// this helper binds to elements based on a selector and returns a
 	// function that unbinds.
 	delegate = function (el, selector, ev, callback) {
-        canEvent.on.call(el, ev, selector, callback);
 
-		return function () {
-            canEvent.off.call(el, ev, selector, callback);
-		};
+		if(jQuery.event.special[ev]) {
+			$(el).delegate(selector, ev, callback);
+			return function(){
+				$(el).undelegate(selector, ev, callback);
+			}
+		} else {
+			canEvent.on.call(el, ev, selector, callback);
+			return function () {
+				canEvent.off.call(el, ev, selector, callback);
+			};
+		}
 	},
 
 	// ### binder
@@ -116,7 +123,7 @@ var Control = Construct.extend("Control",
 			if (typeof method !== "function") {
 				method = context[method];
 			}
-            var Control = this;
+			var Control = this;
 			function controlMethod() {
 				var wrapped = Control.wrapElement(this);
 				var args = slice.call(arguments, 0);
@@ -126,14 +133,14 @@ var Control = Construct.extend("Control",
 				context.called = name;
 				return method.apply(context, [wrapped].concat(args));
 			}
-      //!steal-remove-start
-      if(process.env.NODE_ENV !== 'production') {
-	      Object.defineProperty(controlMethod, "name", {
-	      	value: canReflect.getName(this) + "["+name+"]",
-	      });
-	     }
-      //!steal-remove-end
-      return controlMethod;
+	  //!steal-remove-start
+	  if(process.env.NODE_ENV !== 'production') {
+		  Object.defineProperty(controlMethod, "name", {
+			value: canReflect.getName(this) + "["+name+"]",
+		  });
+		 }
+	  //!steal-remove-end
+	  return controlMethod;
 		},
 
 		// ## can.Control._isAction
@@ -159,7 +166,7 @@ var Control = Construct.extend("Control",
 		// * It is called wehn a control instance is created, but only for templated actions.
 		_action: function(methodName, options, controlInstance) {
 			var readyCompute,
-                unableToBind;
+				unableToBind;
 
 			// If we don't have options (a `control` instance), we'll run this later. If we have
 			// options, run `can.sub` to replace the action template `{}` with values from the `options`
@@ -304,9 +311,9 @@ var Control = Construct.extend("Control",
 		// ## can.Control.defaults
 		// A object of name-value pairs that act as default values for a control instance
 		defaults: {},
-        // should be used to overwrite to make nodeLists on this
-        convertElement: function(element) {
-            element = typeof element === "string" ?
+		// should be used to overwrite to make nodeLists on this
+		convertElement: function(element) {
+			element = typeof element === "string" ?
 							document.querySelector(element) : element;
 
 						return this.wrapElement(element);
@@ -318,14 +325,14 @@ var Control = Construct.extend("Control",
 				return $(el);
 			}
 
-        },
-        unwrapElement: function(el){
-            return el[0];
-        },
-        // should be overwritten to look in jquery special events
-        isSpecial: function(eventName){
-            return eventName === "inserted" || eventName === "removed" || $.event.special[eventName];
-        }
+		},
+		unwrapElement: function(el){
+			return el && el[0];
+		},
+		// should be overwritten to look in jquery special events
+		isSpecial: function(eventName){
+			return eventName === "inserted" || eventName === "removed" || $.event.special[eventName];
+		}
 	}, {
 		// ## *prototype functions*
 		/**

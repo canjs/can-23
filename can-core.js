@@ -34,24 +34,24 @@ List.prototype.each = List.prototype.forEach;
 var specialRead = {index: true, key: true, event: true, element: true, viewModel: true};
 var baseObjectRead = stacheKey.propertyReadersMap.object.read;
 stacheKey.propertyReadersMap.object.read = function compatabilityObjectRead(value, prop, reads, options, state, prev){
-  if(options.can23Compatibility ) {
-	  var valueType = typeof value;
-  	if(value == null || (valueType !== 'object' && valueType !== 'function')) {
-  		return undefined;
-  	} else {
-  		if(prop.key in value) {
-  			return value[prop.key];
-  		}
-  		// TODO: remove in 3.0.  This is for backwards compat with @key and @index.
-  		else if( prop.at && specialRead[prop.key] && ( ("@"+prop.key) in value)) {
-  			prop.at = false;
-  			return value["@"+prop.key];
-  		}
+	if(options.can23Compatibility ) {
+		var valueType = typeof value;
+		if(value == null || (valueType !== 'object' && valueType !== 'function')) {
+			return undefined;
+		} else {
+			if(prop.key in value) {
+				return value[prop.key];
+			}
+			// TODO: remove in 3.0.  This is for backwards compat with @key and @index.
+			else if( prop.at && specialRead[prop.key] && ( ("@"+prop.key) in value)) {
+				prop.at = false;
+				return value["@"+prop.key];
+			}
 
-  	}
-  } else {
-    return baseObjectRead.apply(this, arguments);
-  }
+		}
+	} else {
+		return baseObjectRead.apply(this, arguments);
+	}
 };
 
 var CanJSNames = {Control: 1, LetContext: 1, DefineList: 1};
@@ -197,10 +197,11 @@ var can23 = {
 		}
 	},
 	view: function(id, data) {
-		var stache = require("./view/stache/stache")
-		return stache.from(id)(data);
+		var stache = require("./view/stache/stache");
+		var tmpl = typeof id === "string" ? stache.from(id) : id;
+		return tmpl(data);
 	},
-	ajax: $.ajax
+	ajax: jQuery.ajax
 };
 
 jQuery.fn.viewModel = function(attr, value){

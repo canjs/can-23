@@ -214,6 +214,11 @@ jQuery.fn.trigger = function(event, args) {
 	});
 	return this;
 }
+var $data = jQuery.fn.data;
+jQuery.fn.data = function() {
+	var ret = can23.data.apply(can23, [this].concat([].slice.call(arguments, 0)))
+	return $data.apply(this, arguments) || ret;
+}
 
 window.can = can23;
 can23.scope = can23.viewModel;

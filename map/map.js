@@ -1,5 +1,5 @@
 
-module.exports = require("can-map");
+var Map = module.exports = require("can-map");
 
 var mapHelpers = require("can-map/map-helpers");
 
@@ -12,3 +12,5 @@ mapHelpers.addComputedAttr = function(map, attrName, compute){
 	map[attrName] = compute;
 	return addComputedAttr.apply(this, arguments);
 }
+
+Map.prototype.each = Map.prototype.forEach;

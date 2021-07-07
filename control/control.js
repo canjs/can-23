@@ -357,18 +357,18 @@ var Control = Construct.extend("Control",
 				throw new Error('Creating an instance of a named control without passing an element');
 			}
 			// Retrieve the raw element, then set the plugin name as a class there.
-            this.element = cls.convertElement(element);
+			this.element = cls.convertElement(element);
 
 			if (pluginname && pluginname !== 'Control' && this.element.classList) {
-                this.element.classList.add(pluginname);
+				this.element.classList.add(pluginname);
 			}
 
 			// Set up the 'controls' data on the element. If it does not exist, initialize
 			// it to an empty array.
-			arr = this.element[controlsSymbol];
+			arr = cls.unwrapElement(this.element)[controlsSymbol];
 			if (!arr) {
 				arr = [];
-				this.element[controlsSymbol] = arr;
+				cls.unwrapElement(this.element)[controlsSymbol] = arr;
 			}
 			arr.push(this);
 
@@ -379,7 +379,8 @@ var Control = Construct.extend("Control",
 				arrData = [];
 				can.data(this.element, 'controls', arr);
 			}
-			arrData.push(this);
+			// arr and arrData are the same array.  We just needed to make sure it was available in data
+			// arrData.push(this);
 
 			// The `this.options` property is an Object that contains configuration data
 			// passed to a control when it is created (`new can.Control(element, options)`)
@@ -515,16 +516,17 @@ var Control = Construct.extend("Control",
 				return;
 			}
 			var Class = this.constructor,
+				element = Class.unwrapElement(this.element),
 				pluginName = Class.pluginName || (Class.shortName && string.underscore(Class.shortName)),
 				controls;
 
 			this.off();
 
 			if (pluginName && pluginName !== 'can_control' && this.element.classList) {
-                this.element.classList.remove(pluginName);
+				this.element.classList.remove(pluginName);
 			}
 
-			controls = this.element[controlsSymbol];
+			controls = element[controlsSymbol];
 			if (controls) {
 				controls.splice(controls.indexOf(this), 1);
 			}

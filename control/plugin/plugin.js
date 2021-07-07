@@ -1,5 +1,6 @@
 var $ = require("jquery");
 var can = require("../../can-23");
+var canSymbol = require("can-symbol");
 require("../control");
 
 	$ = $ || window.$;
@@ -101,7 +102,7 @@ require("../control");
 				controls, c;
 			//check if arguments
 			this.each(function () {
-				controls = can.data(this, 'controls');
+				controls = this[canSymbol.for("can.controls")] //can.data(this, 'controls');
 				if (!controls) {
 					return;
 				}

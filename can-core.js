@@ -85,9 +85,9 @@ var can23 = {
 		var args = [
 			object,
 			function(val, key, obj) {
-				// preserve legacy behavior of each on Maps
+				// preserve legacy behavior of each on Maps, including setting "this" to the item if no context is set
 				if (!(obj instanceof Map) || canReflect.hasOwnKey(obj, key)) {
-					callback.call(context || obj, val, key, obj);
+					callback.call(context || val, val, key, obj);
 				}
 			},
 			context
@@ -217,7 +217,7 @@ jQuery.fn.trigger = function(event, args) {
 var $data = jQuery.fn.data;
 jQuery.fn.data = function() {
 	var ret = can23.data.apply(can23, [this].concat([].slice.call(arguments, 0)))
-	return $data.apply(this, arguments) || ret;
+	return arguments.length ? ($data.apply(this, arguments) || ret) : Object.assign({}, $data.apply(this, arguments), ret);
 }
 
 window.can = can23;

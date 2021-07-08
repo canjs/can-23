@@ -359,19 +359,20 @@ var Control = Construct.extend("Control",
 			// Retrieve the raw element, then set the plugin name as a class there.
 			this.element = cls.convertElement(element);
 
-			if (pluginname && pluginname !== 'Control' && this.element.classList) {
-				this.element.classList.add(pluginname);
-			}
 
 			// Set up the 'controls' data on the element. If it does not exist, initialize
 			// it to an empty array.
-			arr = cls.unwrapElement(this.element)[controlsSymbol];
+			var unwrapped = cls.unwrapElement(this.element);
+			arr = unwrapped[controlsSymbol];
 			if (!arr) {
 				arr = [];
-				cls.unwrapElement(this.element)[controlsSymbol] = arr;
+				unwrapped[controlsSymbol] = arr;
 			}
 			arr.push(this);
 
+			if (pluginname && pluginname !== 'Control' && unwrapped.classList) {
+				unwrapped.classList.add(pluginname);
+			}
 			// Set up the 'controls' data on the element. If it does not exist, initialize
 			// it to an empty array.
 			var arrData = can.data(this.element, 'controls');

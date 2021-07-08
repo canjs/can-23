@@ -9,7 +9,7 @@
 //
 // `Component.setup` prepares everything needed by the `Component.prototype.setup`
 // to hookup the component.
-var can23 = require('../can-23');
+var can23 = require('../can-core');
 var Bind = require("can-bind");
 var Construct = require("can-construct");
 var modernStache = require("can-stache");

@@ -1,6 +1,5 @@
 var can = require("../can-core");
 var compute = require("can-compute");
-var canReflect = require("can-reflect");
 
 	// there are things that you need to evaluate when you get them back as a property read
 	// for example a compute or a function you might need to call to get the next value to

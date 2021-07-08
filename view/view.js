@@ -2,14 +2,20 @@ var can23 = require("../can-core");
 var assign = require("can-assign");
 var stacheKey = require("can-stache-key");
 var viewCallbacks = require("can-view-callbacks");
+var stache = require("./stache/stache");
 var canReflect = require("can-reflect");
-require("./stache/stache");
+var Scope = require("./scope/scope");
 
 function isAt(index, reads) {
   var prevRead = reads[index-1];
   return prevRead && prevRead.at;
 }
-assign(can23.view, {
+var view = can23.view = function(id, data) {
+  var tmpl = typeof id === "string" ? stache.from(id) : id;
+  return tmpl(data);
+};
+
+assign(view, {
   tag: function(){
     return viewCallbacks.tag.apply(viewCallbacks, arguments);
   },
@@ -44,6 +50,8 @@ stacheKey.valueReadersMap.function.read = function compatabilityRead(value, i, r
     return sixRead.apply(this, arguments);
   }
 }
+view.Scope = Scope;
+view.Options = Scope.Options;
+view.preload = view.registerView = stache.registerPartial;
 
-
-module.exports = can23.view;
+module.exports = view;

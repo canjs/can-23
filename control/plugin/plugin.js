@@ -1,5 +1,5 @@
 var $ = require("jquery");
-var can = require("../../can-23");
+var can = require("../../can-core");
 var canSymbol = require("can-symbol");
 require("../control");
 
@@ -245,4 +245,4 @@ require("../control");
 		can.extend(this.options, options);
 		this.on();
 	};
-	return can;
+	module.exports = can;

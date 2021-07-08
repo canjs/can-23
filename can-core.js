@@ -208,11 +208,6 @@ var can23 = {
 
 		}
 	},
-	view: function(id, data) {
-		var stache = require("./view/stache/stache");
-		var tmpl = typeof id === "string" ? stache.from(id) : id;
-		return tmpl(data);
-	},
 	ajax: jQuery.ajax
 };
 

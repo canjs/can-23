@@ -11,7 +11,7 @@
 // - makeDataBinding - A helper method for setting up a data binding.
 // - initializeValues - A helper that initializes a data binding.
 
-var can = require("can-23");
+var can = require("../../can-core");
 var expression = require("../stache/expression");
 var viewCallbacks = require("can-view-callbacks");
 var live = require("can-view-live");

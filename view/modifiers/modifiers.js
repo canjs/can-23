@@ -1,5 +1,5 @@
 var $ = require("jquery");
-var can = require("../../can-23");
+var can = require("../../can-core");
 
 	$ = $ || window.$;
 

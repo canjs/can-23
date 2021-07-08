@@ -11,6 +11,7 @@ var canReflect = require("can-reflect");
 var defineLazyValue = require('can-define-lazy-value');
 var stacheHelpers = require("../helpers");
 var jQuery = require("jquery");
+
 		/**
 		 * @add can.view.Scope
 		 */
@@ -513,7 +514,7 @@ var jQuery = require("jquery");
 			return this.getTemplateContext()._context;
 		});
 
-		can.view.Scope = Scope;
+		
 
 		function Options(data, parent, meta){
 			if (!data.helpers && !data.partials && !data.tags) {
@@ -525,7 +526,7 @@ var jQuery = require("jquery");
 		}
 		Options.prototype = new Scope();
 		Options.prototype.constructor = Options;
-
-		can.view.Options = Options;
+		Scope.Options = Options;
+		
 
 		module.exports = Scope;

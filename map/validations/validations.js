@@ -1,4 +1,4 @@
-var can = require('../../can-23');
+var can = require('../../can-core');
 require('../map');
 
 //validations object is by property.  You can have validations that

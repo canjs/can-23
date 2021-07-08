@@ -161,7 +161,19 @@ var can23 = {
 		} else {
 			return domData.get(target[0], prop)
 		}
-
+	},
+	removeData: function(target, prop, data){
+		target = can23.$(target);
+		if(arguments.length > 1) {
+			target.forEach(function(targetNode, i){
+				domData.clean(targetNode, prop)
+			});
+		} else {
+			target.forEach(function(targetNode, i){
+				domData.delete(targetNode);
+			})
+		}
+		return target;
 	},
 	trim: function(str) {
 		return str.trim();
@@ -214,11 +226,28 @@ jQuery.fn.trigger = function(event, args) {
 	});
 	return this;
 }
-var $data = jQuery.fn.data;
+var $fndata = jQuery.fn.data;
 jQuery.fn.data = function() {
 	var ret = can23.data.apply(can23, [this].concat([].slice.call(arguments, 0)))
-	return arguments.length ? ($data.apply(this, arguments) || ret) : Object.assign({}, $data.apply(this, arguments), ret);
+	return arguments.length ? ($fndata.apply(this, arguments) || ret) : Object.assign({}, $fndata.apply(this, arguments), ret);
 }
+var $data = jQuery.data;
+jQuery.data = function() {
+	var ret = can23.data.apply(can23, arguments);
+	return arguments.length > 1 ? ($data.apply(jQuery, arguments) || ret) : Object.assign({}, $data.apply(jQuery, arguments), ret);
+}
+var $fnRemoveData = jQuery.fn.removeData;
+jQuery.fn.removeData = function() {
+	can23.removeData.apply(can23, [this].concat([].slice.call(arguments, 0)))
+	return $fnRemoveData.apply(this, arguments);
+}
+var $removeData = jQuery.removeData;
+jQuery.removeData = function() {
+	can23.removeData.apply(can23, arguments);
+	return $removeData.apply(jQuery, arguments);
+}
+
+
 
 window.can = can23;
 can23.scope = can23.viewModel;

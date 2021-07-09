@@ -67,6 +67,11 @@ var bind = function (el, ev, callback, queue) {
 			return function(){
 				$(el).undelegate(selector, ev, callback);
 			}
+		} else if (typeof el.delegate === "function") {
+			el.delegate(selector, ev, callback);
+			return function() {
+				el.undelegate(selector, ev, callback);
+			}
 		} else {
 			canEvent.on.call(el, ev, selector, callback);
 			return function () {

@@ -52,3 +52,4 @@ mutateNode.removeChild = function can23_beforeRemove_removeChild(child) {
 	}
 	oldRemoveChild.apply(this, arguments);
 }
+mutateNode.removeChild.addsSyncBeforeRemove = true;

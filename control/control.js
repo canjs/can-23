@@ -20,6 +20,7 @@ var string = require("can-string");
 var get = require("can-key/get/get");
 var domMutate = require('can-dom-mutate');
 var canSymbol = require('can-symbol');
+var mutateNode = require("can-dom-mutate/node");
 
 var controlsSymbol = canSymbol.for("can.controls");
 var $ = require("jquery");
@@ -550,7 +551,7 @@ Control = Construct.extend("Control",
 // when called.
 processors = Control.processors;
 basicProcessor = function (el, event, selector, methodName, control) {
-	if( event === "removed" ) {
+	if(mutateNode.removeChild.addsSyncBeforeRemove && event === "removed" ) {
 		// if there's not some sort of override to use the new behavior
 		if(! control.$useAsyncRemoved || Control.$useAsyncRemoved ) {
 			event = "beforeRemove"

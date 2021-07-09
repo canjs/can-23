@@ -437,32 +437,39 @@ Control = Construct.extend("Control",
 					}
 				}
 
-				// Set up the ability to `destroy` the control later.
-				/*var removalDisposal = domMutate.onNodeDisconnected(element, function () {
-					var doc = element.ownerDocument;
-					var ownerNode = doc.contains ? doc : doc.documentElement;
-					if (!ownerNode || ownerNode.contains(element) === false) {
-						// if the teardown is happening while the dom queue is flushing,
-						// there may have been a rebinding of _action handlers queued
-						// in the mutate queue already, so do the teardown later.
-						if(queues.domQueue.isFlushing) {
-							queues.mutateQueue.enqueue(destroyCB);
-						} else {
-							destroyCB();
+				if(mutateNode.removeChild.addsSyncBeforeRemove && (! this.$useAsyncRemoved || this.$useAsyncRemoved)) {
+					canEvent.on.call(element, "beforeRemove", destroyCB);
+					bindings.user.push(function (el) {
+							canEvent.off.call(el, "beforeRemove", destroyCB);
+					});
+				} else {
+					// Set up the ability to `destroy` the control later.
+					var removalDisposal = domMutate.onNodeDisconnected(element, function () {
+						var doc = element.ownerDocument;
+						var ownerNode = doc.contains ? doc : doc.documentElement;
+						if (!ownerNode || ownerNode.contains(element) === false) {
+							// if the teardown is happening while the dom queue is flushing,
+							// there may have been a rebinding of _action handlers queued
+							// in the mutate queue already, so do the teardown later.
+							if(queues.domQueue.isFlushing) {
+								queues.mutateQueue.enqueue(destroyCB);
+							} else {
+								destroyCB();
+							}
 						}
-					}
-				});
-				bindings.user.push(function () {
-					if (removalDisposal) {
-						removalDisposal();
-						removalDisposal = undefined;
-					}
-				});*/
+					});
+					bindings.user.push(function () {
+						if (removalDisposal) {
+							removalDisposal();
+							removalDisposal = undefined;
+						}
+					});
+				}
 
-				canEvent.on.call(element, "beforeRemove", destroyCB);
-				bindings.user.push(function (el) {
-						canEvent.off.call(el, "beforeRemove", destroyCB);
-				});
+
+
+
+
 				return bindings.user.length;
 			}
 

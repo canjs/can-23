@@ -6,12 +6,14 @@ var canDomMutate = require("can-dom-mutate");
 var eventQueue = require("can-event-queue/map/map");
 var testUtils = require("../test-utils");
 
+require("../util/before-remove");
+
 require("./component");
 
 (function () {
 
 	function skip(test) {
-		console.log("skip:", test);
+		console.log("skip component_test:", test);
 	}
 
 	var innerHTML = testUtils.innerHTML;
@@ -151,6 +153,154 @@ require("./component");
 					},
 					" removed": function () {
 						this.parentVM.removePanel(this.viewModel);
+					}
+				}
+			});
+
+			var template = can.stache("<tabs>{{#each foodTypes}}<panel title='{{title}}'>{{content}}</panel>{{/each}}</tabs>");
+
+			var foodTypes = new can.List([{
+				title: "Fruits",
+				content: "oranges, apples"
+			}, {
+				title: "Breads",
+				content: "pasta, cereal"
+			}, {
+				title: "Sweets",
+				content: "ice cream, candy"
+			}]);
+
+			var frag = template({
+				foodTypes: foodTypes
+			});
+
+			can.append(this.$fixture, frag);
+			canDomMutate.flushRecords();
+
+			var testArea = this.fixture,
+				lis = testArea.getElementsByTagName("li");
+
+			equal(lis.length, 3, "three lis added");
+
+			foodTypes.each(function (type, i) {
+				equal(innerHTML(lis[i]), type.attr("title"), "li " + i + " has the right content");
+			});
+
+			foodTypes.push({
+				title: "Vegies",
+				content: "carrots, kale"
+			});
+			canDomMutate.flushRecords();
+
+			lis = testArea.getElementsByTagName("li");
+
+			//lis = testArea.getElementsByTagName("li");
+			equal(lis.length, 4, "li added");
+
+
+			foodTypes.each(function (type, i) {
+				equal( innerHTML(lis[i]), type.attr("title"), "li " + i + " has the right content");
+			});
+
+			equal(testArea.getElementsByTagName("panel")
+				.length, 4, "panel added");
+
+			foodTypes.shift();
+			canDomMutate.flushRecords();
+
+			lis = testArea.getElementsByTagName("li");
+
+			equal(lis.length, 3, "removed li after shifting a foodType");
+
+			foodTypes.each(function (type, i) {
+				equal( innerHTML(lis[i]), type.attr("title"), "li " + i + " has the right content (third check)");
+			});
+
+			// test changing the active element
+			var panels = testArea.getElementsByTagName("panel");
+
+			equal(lis[0].className, "active", "the first element is active");
+			equal(innerHTML( panels[0] ), "pasta, cereal", "the first content is shown");
+			equal(innerHTML( panels[1] ), "", "the second content is removed");
+
+			can.trigger(lis[1], "click");
+			canDomMutate.flushRecords();
+
+			lis = testArea.getElementsByTagName("li");
+
+			equal(lis[1].className, "active", "the second element is active");
+			equal(lis[0].className, "", "the first element is not active");
+
+			equal( innerHTML( panels[0]), "", "the second content is removed");
+			equal( innerHTML( panels[1]), "ice cream, candy", "the second content is shown");
+
+		});
+
+		test("basic tabs with old-school teardown", function () {
+
+			// new Tabs() ..
+			can.Component.extend({
+				tag: "tabs",
+				template: can.stache("<ul>" +
+					"{{#panels}}" +
+					"<li {{#isActive}}class='active'{{/isActive}} on:click='makeActive(this)'>{{title}}</li>" +
+					"{{/panels}}" +
+					"</ul>" +
+					"<content></content>"),
+				viewModel: {
+					panels: [],
+					addPanel: function (panel) {
+
+						if (this.attr("panels")
+							.length === 0) {
+							this.makeActive(panel);
+						}
+						this.attr("panels")
+							.push(panel);
+					},
+					removePanel: function (panel) {
+						var panels = this.attr("panels");
+						can.batch.start();
+						panels.splice(panels.indexOf(panel), 1);
+						if (panel === this.attr("active")) {
+							if (panels.length) {
+								this.makeActive(panels[0]);
+							} else {
+								this.removeAttr("active");
+							}
+						}
+						can.batch.stop();
+					},
+					makeActive: function (panel) {
+						this.attr("active", panel);
+						this.attr("panels")
+							.each(function (panel) {
+								panel.attr("active", false);
+							});
+						panel.attr("active", true);
+
+					},
+					// this is viewModel, not mustache
+					// consider removing viewModel as arg
+					isActive: function (panel) {
+						return this.attr('active') === panel;
+					}
+				}
+			});
+			can.Component.extend({
+				// make sure <content/> works
+				template: can.stache("{{#if active}}<content></content>{{/if}}"),
+				tag: "panel",
+				viewModel: {
+					active: false,
+					title: "@"
+				},
+				events: {
+					" inserted": function () {
+						can.viewModel(this.element[0].parentNode).addPanel(this.viewModel);
+					},
+					" beforeRemove": function () {
+						can.viewModel(this.element[0].parentNode).removePanel(this.viewModel);
 					}
 				}
 			});

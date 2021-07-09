@@ -208,7 +208,8 @@ var can23 = {
 
 		}
 	},
-	ajax: jQuery.ajax
+	ajax: jQuery.ajax,
+	when: jQuery.when
 };
 
 jQuery.fn.viewModel = function(attr, value){

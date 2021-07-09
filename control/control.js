@@ -26,12 +26,11 @@ var $ = require("jquery");
 
 
 var processors;
-
+var Control;
 
 // ### bind
 // this helper binds to one element and returns a function that unbinds from that element.
 var bind = function (el, ev, callback, queue) {
-
 	if(jQuery.event.special[ev]) {
 		$(el).bind(ev, callback);
 		return function(){
@@ -86,7 +85,7 @@ var bind = function (el, ev, callback, queue) {
 
 	basicProcessor;
 
-var Control = Construct.extend("Control",
+Control = Construct.extend("Control",
 	// ## *static functions*
 	/**
 	 * @static
@@ -133,14 +132,14 @@ var Control = Construct.extend("Control",
 				context.called = name;
 				return method.apply(context, [wrapped].concat(args));
 			}
-	  //!steal-remove-start
-	  if(process.env.NODE_ENV !== 'production') {
-		  Object.defineProperty(controlMethod, "name", {
-			value: canReflect.getName(this) + "["+name+"]",
-		  });
-		 }
-	  //!steal-remove-end
-	  return controlMethod;
+			//!steal-remove-start
+			if(process.env.NODE_ENV !== 'production') {
+				Object.defineProperty(controlMethod, "name", {
+					value: canReflect.getName(this) + "["+name+"]",
+				});
+			}
+			//!steal-remove-end
+			return controlMethod;
 		},
 
 		// ## can.Control._isAction
@@ -432,7 +431,7 @@ var Control = Construct.extend("Control",
 				}
 
 				// Set up the ability to `destroy` the control later.
-				var removalDisposal = domMutate.onNodeDisconnected(element, function () {
+				/*var removalDisposal = domMutate.onNodeDisconnected(element, function () {
 					var doc = element.ownerDocument;
 					var ownerNode = doc.contains ? doc : doc.documentElement;
 					if (!ownerNode || ownerNode.contains(element) === false) {
@@ -451,6 +450,11 @@ var Control = Construct.extend("Control",
 						removalDisposal();
 						removalDisposal = undefined;
 					}
+				});*/
+
+				canEvent.on.call(element, "beforeRemove", destroyCB);
+				bindings.user.push(function (el) {
+						canEvent.off.call(el, "beforeRemove", destroyCB);
 				});
 				return bindings.user.length;
 			}
@@ -546,6 +550,13 @@ var Control = Construct.extend("Control",
 // when called.
 processors = Control.processors;
 basicProcessor = function (el, event, selector, methodName, control) {
+	if( event === "removed" ) {
+		// if there's not some sort of override to use the new behavior
+		if(! control.$useAsyncRemoved || Control.$useAsyncRemoved ) {
+			event = "beforeRemove"
+		}
+
+	}
 	return binder(el, event, Control._shifter(control, methodName), selector);
 };
 

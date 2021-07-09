@@ -13,7 +13,7 @@ require("./component");
 (function () {
 
 	function skip(test) {
-		console.log("skip:", test);
+		console.log("skip component_test:", test);
 	}
 
 	var innerHTML = testUtils.innerHTML;

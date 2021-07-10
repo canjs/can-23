@@ -140,7 +140,6 @@ var can23 = {
 			} else {
 				domEvents.dispatch(targetNode, { type: event, data: data });
 			}
-
 		});
 		return target;
 	},
@@ -216,10 +215,15 @@ jQuery.fn.viewModel = function(attr, value){
 	var args = [this[0]].concat( [].slice.call(arguments, 0 ));
 	return can23.viewModel.apply(can23, args);
 }
+var $trigger = jQuery.fn.trigger;
 jQuery.fn.trigger = function(event, args) {
-	this.each(function(_, el) {
-		can23.trigger(el, event, args);
-	});
+	if(event instanceof jQuery.Event) {
+		$trigger.apply(this, arguments)
+	} else {
+		this.each(function(_, el) {
+			can23.trigger(el, event, args);
+		});
+	}
 	return this;
 }
 var $fndata = jQuery.fn.data;

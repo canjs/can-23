@@ -12,7 +12,11 @@ function isAt(index, reads) {
 }
 var view = can23.view = function(id, data) {
   var tmpl = typeof id === "string" ? stache.from(id) : id;
-  return tmpl(data);
+  if(arguments.length > 1) {
+    return tmpl(data);
+  } else {
+    return tmpl;
+  }
 };
 
 assign(view, {

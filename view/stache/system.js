@@ -23,7 +23,7 @@ function template(imports, intermediate, filename){
 		"\t\t\treturn map;\n" +
 		"\t\t}, {});\n" +
 		"\n"+
-		"\t\tif (!(scope instanceof Scope)) { scope = new Scope(scope); }\n" +
+		"\t\tif (!(scope instanceof Scope)) { scope = new Scope(scope || {}); }\n" +
 		"\t\tvar variableScope = scope.getScope(function(s) { return s._meta.variable === true });\n" +
 		"\t\tif (!variableScope) {\n" +
 		"\t\t\t/*scope = scope.addLetContext();*/\n" +

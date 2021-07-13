@@ -119,7 +119,9 @@ var can23 = {
 		}
 		return [selector];
 	},
-	isFunction: canReflect.isFunctionLike,
+	isFunction: function(obj) {
+		return (!!obj && obj.isComputed) || canReflect.isFunctionLike(obj);
+	},
 	append: function(target, content){
 		if(typeof content === "string") {
 			content = fragment(content, target[0].ownerDocument);

@@ -79,7 +79,13 @@ Construct._created = function(className, Constructor){
 }
 
 var can23 = {
-	extend: assign,
+	extend: function(dest) {
+		var sources = [].slice.call(arguments, 1);
+		sources.forEach(function(source) {
+			assign(dest, source);
+		});
+		return dest;
+	},
 	Map: Map,
 	compute: compute,
 	each: function (object, callback, context) {

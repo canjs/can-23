@@ -7,7 +7,7 @@ var List = require("can-list");
 var TemplateContext = require("can-view-scope/template-context");
 var domEvents = require("can-dom-events");
 var mutateNode = require("can-dom-mutate/node");
-var domMutateEvents require("can-dom-mutate/events/events");
+var domMutateEvents = require("can-dom-mutate/events/events");
 var fragment = require("can-fragment");
 var domData = require("can-dom-data");
 var viewModel = require("can-view-model");

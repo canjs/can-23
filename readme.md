@@ -32,6 +32,20 @@ Import `can-23/util/before-remove` before any controls instance get created.
 
 Run migrations to change view-bindings.
 
+### Step: Handle events on controls after teardown
+
+CanJS 2.3 had different event timing than CanJS 6's queues system.
+
+The `can-23/control/noop-event-handlers-on-destroyed` rewrites control event
+handlers to check if the control has been destroyed before calling the callback function.
+
+Import it before any Control is instantiated:
+
+```js
+import "can-23/control/noop-event-handlers-on-destroyed"
+```
+
+This plugin will warn when a control event handler is called after destroy. 
 
 ## Limitations
 

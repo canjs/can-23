@@ -7,6 +7,7 @@ var List = require("can-list");
 var TemplateContext = require("can-view-scope/template-context");
 var domEvents = require("can-dom-events");
 var mutateNode = require("can-dom-mutate/node");
+var domMutateEvents require("can-dom-mutate/events/events");
 var fragment = require("can-fragment");
 var domData = require("can-dom-data");
 var viewModel = require("can-view-model");
@@ -247,7 +248,8 @@ jQuery.removeData = function() {
 	return $removeData.apply(jQuery, arguments);
 }
 
-
+// can/util/jquery/jquery.js implemented this special event on attributes
+domEvents.addEvent(domMutateEvents.attributes);
 
 window.can = can23;
 can23.scope = can23.viewModel;

@@ -143,11 +143,15 @@ var can23 = {
 	},
 	trigger: function(target, event, data){
 		target = can23.$(target);
+		var dispatchEvent = typeof event === "string" ? { type: event } : event;
+		if (data) {
+			dispatchEvent.data = Array.isArray(data) ? data : [].slice.call(arguments, 2);
+		}
 		target.forEach(function(targetNode, i){
 			if(typeof targetNode.dispatch === "function") {
-				targetNode.dispatch(event);
+				targetNode.dispatch(dispatchEvent);
 			} else {
-				domEvents.dispatch(targetNode, { type: event, data: data });
+				domEvents.dispatch(targetNode, dispatchEvent);
 			}
 		});
 		return target;
@@ -199,7 +203,7 @@ var can23 = {
 		return target;
 	},
 	batch: queues.batch,
-	Deferred: $.Deferred,
+	Deferred: jQuery.Deferred,
 	isPromise: function(obj){
 		return !!obj && (
 			(window.Promise && (obj instanceof Promise)) ||
@@ -220,41 +224,6 @@ var can23 = {
 	when: jQuery.when
 };
 
-jQuery.fn.viewModel = function(attr, value){
-	var args = [this[0]].concat( [].slice.call(arguments, 0 ));
-	return can23.viewModel.apply(can23, args);
-}
-var $trigger = jQuery.fn.trigger;
-jQuery.fn.trigger = function(event, args) {
-	if(event instanceof jQuery.Event) {
-		$trigger.apply(this, arguments)
-	} else {
-		this.each(function(_, el) {
-			can23.trigger(el, event, args);
-		});
-	}
-	return this;
-}
-var $fndata = jQuery.fn.data;
-jQuery.fn.data = function() {
-	var ret = can23.data.apply(can23, [this].concat([].slice.call(arguments, 0)))
-	return arguments.length ? ($fndata.apply(this, arguments) || ret) : Object.assign({}, $fndata.apply(this, arguments), ret);
-}
-var $data = jQuery.data;
-jQuery.data = function() {
-	var ret = can23.data.apply(can23, arguments);
-	return arguments.length > 1 ? ($data.apply(jQuery, arguments) || ret) : Object.assign({}, $data.apply(jQuery, arguments), ret);
-}
-var $fnRemoveData = jQuery.fn.removeData;
-jQuery.fn.removeData = function() {
-	can23.removeData.apply(can23, [this].concat([].slice.call(arguments, 0)))
-	return $fnRemoveData.apply(this, arguments);
-}
-var $removeData = jQuery.removeData;
-jQuery.removeData = function() {
-	can23.removeData.apply(can23, arguments);
-	return $removeData.apply(jQuery, arguments);
-}
 
 // can/util/jquery/jquery.js implemented this special event on attributes
 domEvents.addEvent(domMutateEvents.attributes);

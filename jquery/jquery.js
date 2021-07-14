@@ -1,6 +1,7 @@
 var can23 = require("../can-core");
 var jQuery = require("jquery");
 var assign = require("can-assign");
+var canReflect = require("can-reflect");
 
 var $fndata = jQuery.fn.data;
 var $data = jQuery.data;
@@ -30,6 +31,10 @@ assign(jQuery.fn, {
     return $fnRemoveData.apply(this, arguments);
   }
 });
+canReflect.assignSymbols(jQuery.fn, {
+  "can.isMoreListLikeThanMapLike": true
+});
+
 assign(jQuery, {
   data: function() {
     var ret = can23.data.apply(can23, arguments);

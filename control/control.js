@@ -7,7 +7,7 @@
 // ## helpers
 
 var Construct = require("can-construct");
-require("./construct/proxy/proxy");
+require("../construct/proxy/proxy");
 var can = require("../can-core");
 var assign = require("can-assign");
 var observeReader = require("can-stache-key");

@@ -12,6 +12,15 @@ var defineLazyValue = require('can-define-lazy-value');
 var stacheHelpers = require("../helpers");
 var jQuery = require("jquery");
 
+if (!String.prototype.startsWith) {
+    Object.defineProperty(String.prototype, 'startsWith', {
+        value: function(search, rawPos) {
+            var pos = rawPos > 0 ? rawPos|0 : 0;
+            return this.substring(pos, pos + search.length) === search;
+        }
+    });
+}
+
 		/**
 		 * @add can.view.Scope
 		 */
@@ -93,15 +102,9 @@ var jQuery = require("jquery");
 				if(attr === "%root") {
 					return { value: this.getRoot() };
 				}
-				if(attr === "%jQueryElement") {
-					return {
-						value: jQuery( this.getSpecial("") )
-					}
 
-				}
-				if(attr === "%element" || attr === "%event" || attr === "%viewModel") {
-
-					return this.getSpecial(attr.substr(1));
+				if(attr.startsWith("%element") || attr.startsWith("%event") || attr.startsWith("%viewModel") || attr.startsWith("%jQueryElement") ) {
+					return this.getSpecial(attr.substr(1) , options);
 				}
 
 				// Identify context based keys.  Context based keys try to
@@ -110,10 +113,12 @@ var jQuery = require("jquery");
 					isInParentContext = attr.substr(0, 3) === "../",
 					isCurrentContext = attr === "." || attr === "this",
 					isParentContext = attr === "..",
+					isSpecialContext = attr[0] === "%",
 					isContextBased = isInCurrentContext ||
 						isInParentContext ||
 						isCurrentContext ||
 						isParentContext;
+
 
 				// `notContext` contexts should be skipped if the key is "context based".
 				// For example, the context that holds `%index`.
@@ -163,18 +168,22 @@ var jQuery = require("jquery");
 					return this._read(keyReads,options, currentScopeOnly);
 				}
 			},
-			getSpecial: function(specialAttr){
+			getSpecial: function(specialAttr,readOptions){
+				var keyReads = can.compute.read.reads(specialAttr);
 				var cur = this;
 				while(cur && !cur._meta.special) {
 					cur = cur._parent;
 				}
-				return {
-					value: cur ? cur._context[specialAttr] : undefined
-				};
+				// punch in jQueryElement so %jQueryElement.val would work
+				
+				if(cur && keyReads[0].key === "jQueryElement" && !cur._context.jQueryElement) {
+					cur._context.jQueryElement = jQuery(cur._context.element);
+				}
+				return can.compute.read.read(cur._context, keyReads, readOptions);
 			},
 			// ## Scope.prototype._read
 			//
-			_read: function(keyReads, options, currentScopeOnly){
+			_read: function(keyReads, options, currentScopeOnly, isSpecialContext){
 
 				// The current scope and context we are trying to find "keyReads" within.
 				var currentScope = this,
@@ -514,7 +523,7 @@ var jQuery = require("jquery");
 			return this.getTemplateContext()._context;
 		});
 
-		
+
 
 		function Options(data, parent, meta){
 			if (!data.helpers && !data.partials && !data.tags) {
@@ -527,6 +536,6 @@ var jQuery = require("jquery");
 		Options.prototype = new Scope();
 		Options.prototype.constructor = Options;
 		Scope.Options = Options;
-		
+
 
 		module.exports = Scope;

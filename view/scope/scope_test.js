@@ -450,3 +450,14 @@
 
 		equal( instance.prop, 1);
 	});
+
+	test("%jQueryElement.val", function(){
+		var instance = new can.Map({prop: 0});
+		var top = {NAME: "TOP"};
+		var el = document.createElement("input");
+		el.value = "foo";
+		var scope = new can.view.Scope(instance).add({"element": el},{special: true}).add(top);
+
+		var result = scope.get("%jQueryElement.val");
+		QUnit.equal(result(), "foo");
+	})

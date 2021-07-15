@@ -2,6 +2,7 @@ var canReflect = require("can-reflect");
 
 var Construct = require('../construct');
 
+
 var isFunction = canReflect.isFunctionLike,
 	isArray = Array.isArray,
 	makeArray = canReflect.toArray,
@@ -54,6 +55,8 @@ var isFunction = canReflect.isFunctionLike,
 
 Construct.proxy = Construct.prototype.proxy = proxy;
 // this corrects the case where can/control loads after can/construct/proxy, so static props don't have proxy
+
+/*
 var correctedClasses = [
 	can.Map,
 	can.Control,
@@ -64,6 +67,6 @@ for (; i < correctedClasses.length; i++) {
 	if (correctedClasses[i]) {
 		correctedClasses[i].proxy = proxy;
 	}
-}
+}*/
 
 module.exports = Construct;

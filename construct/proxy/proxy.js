@@ -1,9 +1,10 @@
-var can = require('../../can-core');
+var canReflect = require("can-reflect");
+
 var Construct = require('../construct');
 
-var isFunction = can.isFunction,
-	isArray = can.isArray,
-	makeArray = can.makeArray,
+var isFunction = canReflect.isFunctionLike,
+	isArray = Array.isArray,
+	makeArray = canReflect.toArray,
 	proxy = function (funcs) {
 		//args that should be curried
 		var args = makeArray(arguments),

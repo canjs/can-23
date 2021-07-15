@@ -1,7 +1,9 @@
+var Construct = require("can-construct");
+require("./construct/proxy/proxy");
 var Map = require("./map/map");
 var compute = require("can-compute");
 var canReflect = require("can-reflect");
-var Construct = require("can-construct");
+
 var stacheKey = require("can-stache-key");
 var List = require("can-list");
 var TemplateContext = require("can-view-scope/template-context");
@@ -110,6 +112,8 @@ var can23 = {
 	Construct: Construct,
 	List: List,
 	global: window,
+	makeArray: canReflect.toArray,
+	isArray: Array.isArray,
 	$: function(selector) {
 		if(typeof selector === "string") {
 			return document.querySelectorAll(selector);

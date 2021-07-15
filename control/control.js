@@ -552,9 +552,6 @@ Control = Construct.extend("Control",
 			//canEvent.dispatch.call(this, "destroyed");
 
 			this.element = null;
-		},
-		proxy() {
-			return Function.prototype.bind.apply(arguments[0], [this].concat([].slice.call(arguments, 1)));
 		}
 	});
 

@@ -1,5 +1,7 @@
 
 //require("./compute/read_test");  // hopefully stach-key works
+require("./construct/proxy/proxy-test");
+
 require("./view/scope/scope_test");
 //require("./view/stache/expression_test");
 require("./construct/construct_test");

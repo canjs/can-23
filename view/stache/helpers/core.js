@@ -68,6 +68,7 @@ var helpersCore = {
 
 		// store on global helpers list
 		helpers[name] = callback;
+		callback.fn = callback;
 	},
 	registerHelpers: function(helpers) {
 		var name, callback;
@@ -119,7 +120,7 @@ var helpersCore = {
 	},
 
 	getHelper: function(name, scope) {
-		var helper = scope && scope.getHelper(name);
+		var helper = scope && typeof scope.getHelper === "function" && scope.getHelper(name);
 
 		if (!helper) {
 			helper = helpers[name];
@@ -140,6 +141,7 @@ var helpersCore = {
 	},
 	addBuiltInHelpers: function() {
 		canReflect.each(builtInHelpers, function(helper, helperName) {
+			helper.fn = helper;
 			helpers[helperName] = helper;
 		});
 	},

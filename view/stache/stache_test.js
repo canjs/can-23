@@ -4534,6 +4534,7 @@ function skip(test) {
 		test('getHelper w/o optional options argument (#1497)', function() {
 			var options = can.stache.getHelper('each');
 			ok(typeof options === 'function', 'each helper returned');
+			equal(typeof options.fn,'function', 'each helper.fn returned');
 		});
 
 		test("methods don't update correctly (#1891)", function() {

@@ -2766,8 +2766,8 @@ function skip(test) {
 			}
 		});
 		// TODO: duplicate with %
-		skip("Rendering indicies of an array with @index + offset (#1078)", function () {
-			var template = can.stache("<ul>{{#each list}}<li>{{@index 5}} {{.}}</li>{{/each}}</ul>");
+		test("Rendering indicies of an array with @index + offset (#1078)", function () {
+			var template = can.stache("<ul>{{#each list}}<li>{{%index 5}} {{.}}</li>{{/each}}</ul>");
 			var list = [0, 1, 2, 3];
 
 			var lis = template({
@@ -4681,7 +4681,6 @@ function skip(test) {
 
 			var tmpl = can.stache('{{#each items}}<li>{{.././items.indexOf .}}</li>{{/each}}');
 			var frag = tmpl({items: list});
-			console.log(frag);
 			equal(frag.firstElementChild.firstChild.nodeValue, "0", "read indexOf");
 		});
 

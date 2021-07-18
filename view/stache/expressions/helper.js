@@ -52,7 +52,14 @@ Helper.prototype.value = function(scope, helperOptions){
 		thisArg = helperScopeKeyData && helperScopeKeyData.thisArg,
 		helperValueFn;
 
-	if (typeof initialValue === "function") {
+	if(methodKey === "%index") {
+		helperValueFn = function indexScopeValueFn(){
+			var incrementArgs = helperInstance.args(scope)
+			return canReflect.getValue( helperScopeKeyData ) + (
+				incrementArgs.length ? canReflect.getValue(incrementArgs[0]) : 0 );
+		};
+	}
+	else if (typeof initialValue === "function") {
 		helperValueFn = function helperValueFn() {
 			var args = helperInstance.args(scope),
 				helperOptionArg = assign(assign({}, helperOptions), {
@@ -65,7 +72,7 @@ Helper.prototype.value = function(scope, helperOptions){
 			// so we don't add extra args if it looks like it's part of some other object.
 			if(initialValue.requiresOptionsArgument || !helperScopeKeyData.parentHasKey  ) {
 				args.push(helperOptionArg);
-			} 
+			}
 
 			return initialValue.apply(thisArg || scope.peek("this"), args);
 		};

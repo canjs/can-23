@@ -12,5 +12,6 @@ mapHelpers.addComputedAttr = function(map, attrName, compute){
 	map[attrName] = compute;
 	return addComputedAttr.apply(this, arguments);
 }
+Map.prototype._legacyAttrBehavior = true;
 
 Map.prototype.each = Map.prototype.forEach;

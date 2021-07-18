@@ -45,7 +45,13 @@ Import it before any Control is instantiated:
 import "can-23/control/noop-event-handlers-on-destroyed"
 ```
 
-This plugin will warn when a control event handler is called after destroy. 
+This plugin will warn when a control event handler is called after destroy.
+
+## Other
+
+- can.Map.prototype.\_legacyAttrBehavior is set to `true`. This means classes are left alone.
+
+
 
 ## Limitations
 

@@ -28,6 +28,23 @@ Helper.prototype.args = function(scope, readOptions, helperOptions){
 	}
 	return args;
 };
+
+var simpleConvert = function(){
+	if(canReflect.isObservableLike(value)) {
+		// we only want to do this for things that `should` have dependencies, but dont.
+		//if(canReflect.isValueLike(value) && canReflect.valueHasDependencies(value) === false) {
+		//	return canReflect.getValue(value);
+		//}
+		// if compute data
+		if(value.compute) {
+			return value.compute;
+		} else {
+			return expressionHelpers.makeComputeLike(value);
+		}
+	}
+	return value;
+}
+
 Helper.prototype.hash = function(scope){
 	var hash = {};
 	for(var prop in this.hashExprs) {

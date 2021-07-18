@@ -510,6 +510,16 @@ function skip(test) {
 			equal(getText(t.template, {}), t.expected2);
 		});
 
+		test("hash expressions are passed observable computes", function(){
+			can.stache.registerSimpleHelper('hashNeedsObservable', function (options) {
+				QUnit.equal(typeof options.hash.foo, "function", "passed compute function");
+				QUnit.equal(options.hash.foo(), "BAR", "got value");
+			});
+			var template = can.stache("<div>{{hashNeedsObservable foo=bar}}</div>");
+			var frag = template( new can.Map({bar: "BAR"}) );
+
+		});
+
 		test("Passing functions as data, then executing them", function () {
 			var t = {
 				template: "{{#nested}}{{welcome name}}{{/nested}}",

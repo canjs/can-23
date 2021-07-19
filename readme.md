@@ -47,6 +47,17 @@ import "can-23/control/noop-event-handlers-on-destroyed"
 
 This plugin will warn when a control event handler is called after destroy.
 
+
+### Optional Step: Switch to how CanJS 2.2 passes computes instead of 2.3
+
+CanJS 2.2 would sometimes pass a compute when 2.3 (and 6.0) would pass a value.
+
+To switch to this, set the following:
+
+```js
+can.view.Scope._legacyCan22FindingAnObservableOnTheScopeReturnsComputes = true;
+```
+
 ## Other
 
 - can.Map.prototype.\_legacyAttrBehavior is set to `true`. This means classes are left alone.

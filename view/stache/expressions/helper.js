@@ -28,8 +28,9 @@ Helper.prototype.args = function(scope, readOptions, helperOptions){
 	}
 	return args;
 };
-
-var simpleConvert = function(){
+/*
+// This was an attempt to fix and make observable ...
+var simpleConvert = function(value){
 	if(canReflect.isObservableLike(value)) {
 		// we only want to do this for things that `should` have dependencies, but dont.
 		//if(canReflect.isValueLike(value) && canReflect.valueHasDependencies(value) === false) {
@@ -43,7 +44,7 @@ var simpleConvert = function(){
 		}
 	}
 	return value;
-}
+}*/
 
 Helper.prototype.hash = function(scope){
 	var hash = {};

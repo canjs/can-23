@@ -65,5 +65,8 @@
     "ext": {
       "stache": "can-23/view/stache/system"
     }
+  },
+  "devDependencies": {
+    "testee": "^0.9.1"
   }
 }

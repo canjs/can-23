@@ -4,7 +4,8 @@
   "description": "",
   "main": "can-23.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "testee": "testee test.html --browsers firefox",
+    "test": "npm run testee"
   },
   "author": "Bitovi",
   "license": "MIT",

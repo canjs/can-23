@@ -134,7 +134,6 @@ assign(proto, {
 				if (ev.batchNum === this._lastProcessedBatchNum) {
 					return;
 				} else {
-					debugger;
 					this.sort();
 					this._lastProcessedBatchNum = ev.batchNum;
 					return;

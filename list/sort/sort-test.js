@@ -4,6 +4,7 @@ require("./sort");
 var QUnit = require("steal-qunit");
 require("../../view/stache/stache");
 require("../../model/model");
+var canSymbol = require("can-symbol");
 
 (function () {
 
@@ -392,7 +393,7 @@ require("../../model/model");
 	});
 
 	test('The "destroyed" event bubbles on a sorted list', 2, function () {
-
+		QUnit.stop();
 		var list = new can.Model.List([
 			new can.Model({ name: 'Joe' }),
 			new can.Model({ name: 'Max' }),
@@ -403,11 +404,13 @@ require("../../model/model");
 
 		list.bind('destroyed', function (ev) {
 			ok(true, '"destroyed" event triggered');
+			equal(list.attr('length'), 2, 'item removed');
+			QUnit.start();
 		});
 
 		list.attr(0).destroy();
 
-		equal(list.attr('length'), 2, 'item removed');
+
 	});
 
 	test("sorting works with #each (#1566)", function(){
@@ -460,22 +463,22 @@ require("../../model/model");
 
 		heroes.bind("length",lengthHandler);
 
-		ok(!heroes[0]._bindings, "item has no bindings");
+		ok(!heroes[0][canSymbol.for("can.meta")], "item has no bindings");
 
 		heroes.attr('comparator', 'id');
 
 		heroes.attr("0.id",3);
 
-		ok(heroes._bindings, "list has bindings");
-		ok(heroes[0]._bindings, "item has bindings");
+		ok(!heroes[canSymbol.for("can.meta")].handlers.empty, "list has bindings");
+		ok(heroes[0][canSymbol.for("can.meta")].handlers.empty, "item has bindings");
 
 		heroes.removeAttr('comparator');
 
-		ok(!heroes[0]._bindings, "has bindings");
-		ok(heroes._bindings, "list has bindings");
+		ok(heroes[0][canSymbol.for("can.meta")].handlers.empty, "items has no bindings");
+		ok(!heroes[canSymbol.for("can.meta")].handlers.empty, "list has bindings");
 
 		heroes.unbind("length",lengthHandler);
-		ok(!heroes._bindings, "list has no bindings");
+		ok(!heroes[canSymbol.for("can.meta")].handlers.empty, "list has no bindings");
 	});
 
 	test('sorting works when returning any negative value (#1601)', function() {

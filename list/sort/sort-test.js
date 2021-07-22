@@ -286,8 +286,6 @@ require("../../model/model");
 			el.appendChild(renderer({
 				items: items
 			}));
-			console.log(el);
-			debugger;
 
 			var firstElText = el.querySelector('li').firstChild.data;
 
@@ -296,9 +294,6 @@ require("../../model/model");
 
 			// Change the ID of the last item so that it's sorted above the first item
 			items.attr('2').attr('id', 'a');
-
-			console.log(el);
-			debugger;
 
 			// Get the text of the first <li> in the <div>
 			firstElText = el.querySelector('li').firstChild.data;

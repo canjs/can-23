@@ -12,6 +12,11 @@ mapHelpers.addComputedAttr = function(map, attrName, compute){
 	map[attrName] = compute;
 	return addComputedAttr.apply(this, arguments);
 }
-Map.prototype._legacyAttrBehavior = true;
 
+// prevent this from being observable
+
+Object.defineProperty(Map.prototype, "_legacyAttrBehavior",{
+	value: true,
+	enumerable: false
+});
 Map.prototype.each = Map.prototype.forEach;

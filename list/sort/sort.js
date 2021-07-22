@@ -52,8 +52,8 @@ var makeMoveFromPatch = function(list, patch){
 			insertedIndex = patch[0].index;
 		}
 		if(patch[1].deleteCount === 1) {
-			deleted = list[patch[1].index];
-			deletedIndex = patch[1].index;
+			deletedIndex = insertedIndex <= patch[1].index ? patch[1].index - 1 : patch[1].index;
+			deleted = list[deletedIndex];
 		} else if(patch[1].insert.length === 1) {
 			inserted = patch[1].insert[0];
 			insertedIndex = patch[1].index;
@@ -124,7 +124,7 @@ assign(proto, {
 		return (a === b) ? 0 : (a < b) ? -1 : 1;
 	},
 	_changes: function (ev, attr) {
-		
+
 		var dotIndex = ("" + attr).indexOf('.');
 
 		// If a comparator is defined and the change was to a
@@ -157,7 +157,7 @@ assign(proto, {
 					this._getRelativeInsertIndex(item, currentIndex);
 
 				if (newIndex !== currentIndex) {
-					this._swapItems(currentIndex, newIndex);
+					this._swapItems(currentIndex, newIndex, true);
 
 					// Trigger length change so that {{#block}} helper
 					// can re-render
@@ -280,9 +280,19 @@ assign(proto, {
 				return comparatorFn.call(self, aVal, bVal);
 			});
 
-		var patch = diffList(now, sorted);
-		if(makeMoveFromPatch(this, patch)) {
+		var patches = diffList(now, sorted);
+
+
+		var finalize = function() {
+			[].splice.apply(this,[ 0, sorted.length, ...sorted]);
+			canEventQueueMap.dispatch.call(this, 'can.patches', [patches]);
+			// Trigger length change so that {{#block}} helper can re-render
+			canEventQueueMap.dispatch.call(this, 'length', [this.length]);
 			return this;
+		}.bind(this);
+
+		if(makeMoveFromPatch(this, patches)) {
+			return finalize();
 		}
 
 		for (var i, iMin, j = 0, n = this.length; j < n-1; j++) {
@@ -324,21 +334,21 @@ assign(proto, {
 			}
 		}
 
-		// Trigger length change so that {{#block}} helper can re-render
-		canEventQueueMap.dispatch.call(this, 'length', [this.length]);
-
-		return this;
+		return finalize();
 	},
 
-	_swapItems: function (oldIndex, newIndex) {
+	_swapItems: function (oldIndex, newIndex, actuallyMutate) {
 
 		var temporaryItemReference = this[oldIndex];
 
-		// Remove the item from the list
-		[].splice.call(this, oldIndex, 1);
+		if(actuallyMutate) {
+			// Remove the item from the list
+			[].splice.call(this, oldIndex, 1);
 
-		// Place the item at the correct index
-		[].splice.call(this, newIndex, 0, temporaryItemReference);
+			// Place the item at the correct index
+			[].splice.call(this, newIndex, 0, temporaryItemReference);
+		}
+
 
 		// Update the DOM via can.view.live.list
 		canEventQueueMap.dispatch.call(this, 'move', [

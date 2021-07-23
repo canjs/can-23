@@ -10,3 +10,5 @@ require("./map/define/define_test");
 require("./view/stache/stache_test");
 require("./control/control_test");
 require("./component/component_test");
+
+require("./list/sort/sort-test");

@@ -379,7 +379,7 @@ Control = Construct.extend("Control",
 				arr.push(this);
 			}
 
-			if (pluginname && pluginname !== 'Control' && unwrapped.classList) {
+			if (pluginname && pluginname !== 'Control' && unwrapped && unwrapped.classList) {
 				unwrapped.classList.add(pluginname);
 			}
 			// Set up the 'controls' data on the element. If it does not exist, initialize

@@ -90,7 +90,7 @@ require("./control");
 		});
 
 		test("empty jquery object instantiation", function(){
-			var NothingControl = can.Control.extend({
+			var NothingControl = can.Control.extend("NothingControl",{
 				click: function(){}
 			});
 

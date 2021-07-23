@@ -88,6 +88,16 @@ require("./control");
 			$('#qunit-fixture')
 				.html('');
 		});
+
+		test("empty jquery object instantiation", function(){
+			var NothingControl = can.Control.extend({
+				click: function(){}
+			});
+
+			var el = $([]);
+			new NothingControl(el);
+			QUnit.ok(true, "no errors");
+		});
 	}
 	test('parameterized actions', function () {
 		// YUI does not like non-dom event

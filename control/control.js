@@ -369,12 +369,15 @@ Control = Construct.extend("Control",
 			// Set up the 'controls' data on the element. If it does not exist, initialize
 			// it to an empty array.
 			var unwrapped = cls.unwrapElement(this.element);
-			arr = unwrapped[controlsSymbol];
-			if (!arr) {
-				arr = [];
-				unwrapped[controlsSymbol] = arr;
+
+			if(unwrapped) {
+				arr = unwrapped[controlsSymbol];
+				if (!arr) {
+					arr = [];
+					unwrapped[controlsSymbol] = arr;
+				}
+				arr.push(this);
 			}
-			arr.push(this);
 
 			if (pluginname && pluginname !== 'Control' && unwrapped.classList) {
 				unwrapped.classList.add(pluginname);
@@ -437,8 +440,11 @@ Control = Construct.extend("Control",
 						}
 					}
 				}
+				if(!element) {
+					return bindings.user.length;
+				}
 
-				if(mutateNode.removeChild.addsSyncBeforeRemove && (! this.$useAsyncRemoved || this.$useAsyncRemoved)) {
+				if( mutateNode.removeChild.addsSyncBeforeRemove && (! this.$useAsyncRemoved || this.$useAsyncRemoved) ) {
 					canEvent.on.call(element, "beforeRemove", destroyCB);
 					bindings.user.push(function (el) {
 							canEvent.off.call(el, "beforeRemove", destroyCB);
@@ -466,10 +472,6 @@ Control = Construct.extend("Control",
 						}
 					});
 				}
-
-
-
-
 
 				return bindings.user.length;
 			}

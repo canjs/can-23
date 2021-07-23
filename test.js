@@ -11,4 +11,4 @@ require("./view/stache/stache_test");
 require("./control/control_test");
 require("./component/component_test");
 
-requiire("./list/sort/sort-test");
+require("./list/sort/sort-test");

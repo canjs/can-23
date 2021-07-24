@@ -1,3 +1,4 @@
+require("./list/promise/promise-test");
 
 //require("./compute/read_test");  // hopefully stach-key works
 require("./construct/proxy/proxy-test");

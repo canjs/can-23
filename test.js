@@ -12,3 +12,4 @@ require("./control/control_test");
 require("./component/component_test");
 
 require("./list/sort/sort-test");
+require("./model/model-test");

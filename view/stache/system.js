@@ -17,7 +17,7 @@ function template(imports, intermediate, filename){
 		) +
 		"\tvar tagImports = Array.prototype.slice.call(arguments, 7);\n" +
 		"\treturn function(scope, options, nodeList){\n" +
-		"\t\tvar moduleOptions = assign({}, options);\n" +
+		"\t\tvar moduleOptions = options === Object(options) ? assign({}, options) : options;\n" +
 		"\t\tvar tagImportMap = " + tagImportNames + ".reduce(function(map, name, index) {\n" +
 		"\t\t\tmap[name] = tagImports[index];\n" +
 		"\t\t\treturn map;\n" +

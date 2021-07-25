@@ -497,6 +497,10 @@ function stache (filename, template) {
 
 	var scopifiedRenderer = ObservationRecorder.ignore(function(scope, options){
 		// if an object is passed to options, assume it is the helpers object
+		if(typeof options === "string") {
+			console.warn("can-stache template rendered with options as a string.");
+			options = {};
+		}
 		if (options && !options.helpers && !options.partials && !options.tags) {
 			options = {
 				helpers: options

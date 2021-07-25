@@ -276,11 +276,11 @@ assign(proto, {
 			sorted = now.slice(0).sort(function(a, b){
 				var aVal = self._getComparatorValue(a, singleUseComparator);
 				var bVal = self._getComparatorValue(b, singleUseComparator);
-				return comparatorFn.call(self, aVal, bVal);
+				var comparison =  comparatorFn.call(self, aVal, bVal);
+				return comparison;
 			});
 
 		var patches = diffList(now, sorted);
-
 
 		var finalize = function() {
 			[].splice.apply(this,[ 0, sorted.length, ...sorted]);
@@ -347,7 +347,6 @@ assign(proto, {
 			// Place the item at the correct index
 			[].splice.call(this, newIndex, 0, temporaryItemReference);
 		}
-
 
 		// Update the DOM via can.view.live.list
 		canEventQueueMap.dispatch.call(this, 'move', [

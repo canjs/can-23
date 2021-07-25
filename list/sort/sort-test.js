@@ -572,7 +572,13 @@ var canSymbol = require("can-symbol");
 		var list = new can.List([
 			{
 				id: 'a',
-				index: 1
+				index: 1,
+				child: {
+					grandchild: {
+						id: 'c',
+						index: 4
+					}
+				}
 			},
 			{
 				id: 'b',
@@ -590,6 +596,7 @@ var canSymbol = require("can-symbol");
 		var _getRelativeInsertIndex = list._getRelativeInsertIndex;
 
 		list.bind('move', function (ev) {
+			debugger;
 			ok(false, 'A "move" events should be fired');
 		});
 		list._getRelativeInsertIndex = function () {
@@ -608,12 +615,6 @@ var canSymbol = require("can-symbol");
 			return _getRelativeInsertIndex.apply(this, arguments);
 		};
 
-		list.attr('1.child', {
-			grandchild: {
-				id: 'c',
-				index: 4
-			}
-		});
 
 		equal(list.attr('0.id'), 'a', 'Item not moved');
 	});

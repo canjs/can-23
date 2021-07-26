@@ -18,6 +18,7 @@ var jQuery = require("jquery");
 var assign = require("can-assign");
 var keyWalk = require("can-key/walk/walk");
 var keyUtils = require("can-key/utils");
+var debug = require("can-debug");
 
 require("can-map-define");
 
@@ -81,6 +82,7 @@ Construct._created = function(className, Constructor){
 }
 
 var can23 = {
+	debug: debug,
 	extend: function(dest) {
 		var sources = [].slice.call(arguments, 1);
 		sources.forEach(function(source) {

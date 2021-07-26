@@ -16,6 +16,7 @@
     "can-compute": "^4.1.1",
     "can-construct": "^3.5.7",
     "can-construct-super": "^3.2.1",
+    "can-debug": "^2.0.7",
     "can-define": "^2.8.0",
     "can-define-lazy-value": "^1.1.1",
     "can-deparam": "^1.2.3",

@@ -1,4 +1,4 @@
 var List = require("can-list");
 
 
-return List;
+module.exports = List;

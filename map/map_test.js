@@ -233,6 +233,28 @@ var can = require("can-23");
 		equal(res.map2.name, "map2");
 	});
 
+	test(".attr() keeps non-serializable attributes", function(){
+		const Person = can.Map.extend({
+			define: {
+				age: {
+					serialize: false
+				},
+				dob: {},
+				firstName: {
+					value: ''
+				},
+				lastName: {
+					value: ''
+				},
+			}
+		});
+
+		const morgan = new Person({ firstName: 'Morgan', lastName: 'Heimbeck', age: 90, dob: '1931-01-01' });
+
+		equal(morgan.attr().age, 90)
+		equal(morgan.serialize().age, undefined)
+	});
+
 	test("Unbinding from a map with no bindings doesn't throw an error (#1015)", function() {
 		expect(0);
 

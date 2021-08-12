@@ -251,8 +251,8 @@ var can = require("can-23");
 
 		const morgan = new Person({ firstName: 'Morgan', lastName: 'Heimbeck', age: 90, dob: '1931-01-01' });
 
-		equal(morgan.attr().age, 90)
-		equal(morgan.serialize().age, undefined)
+		equal(morgan.attr().age, 90, ".attr() keeps attributes set to serialize:false")
+		equal(morgan.serialize().age, undefined, ".serialize() removes attributes set to serialize:false")
 	});
 
 	test("Unbinding from a map with no bindings doesn't throw an error (#1015)", function() {

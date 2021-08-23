@@ -7,6 +7,7 @@ var $fndata = jQuery.fn.data;
 var $data = jQuery.data;
 var $fnRemoveData = jQuery.fn.removeData;
 var $removeData = jQuery.removeData;
+var $trigger = jQuery.fn.trigger
 
 var rtypenamespace = /^([^.]*)(?:\.(.+)|)$/,
   rnothtmlwhite = /[^\x20\t\r\n\f]+/g;
@@ -17,9 +18,13 @@ assign(jQuery.fn, {
     return can23.viewModel.apply(can23, args);
   },
   trigger :function(event, args) {
-    this.each(function(_, el) {
-      can23.trigger(el, event, args);
-    });
+    if(jQuery.event.special[event]) {
+      $trigger.apply(this, [event].concat(args || []))
+    } else {
+      this.each(function(_, el) {
+        can23.trigger(el, event, args);
+      });
+    }
     return this;
   },
   data: function() {

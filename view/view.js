@@ -5,6 +5,7 @@ var viewCallbacks = require("can-view-callbacks");
 var stache = require("./stache/stache");
 var canReflect = require("can-reflect");
 var Scope = require("./scope/scope");
+require("./stache/converters/converters");
 
 function isAt(index, reads) {
   var prevRead = reads[index-1];

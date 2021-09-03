@@ -16,7 +16,7 @@ var domData = require('can-dom-data');
 
 //var domData = require('can-dom-data');
 
-//var makeConverter = require('./converter');
+var makeConverter = require('./converter');
 //var debuggerHelper = require('./-debugger').helper;
 //var forHelper = require("./-for-of");
 //var letHelper = require("./-let");

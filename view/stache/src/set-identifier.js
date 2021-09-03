@@ -1,4 +1,2 @@
 "use strict";
-module.exports = function SetIdentifier(value){
-	this.value = value;
-};
+module.exports = require("can-stache/src/set-identifier");

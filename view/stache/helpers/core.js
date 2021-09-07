@@ -437,7 +437,7 @@ var eachHelper = function(items) {
 			result.push(options.fn(
 				options.scope
 				.add(aliases, { notContext: true })
-				.add({ key: key }, { special: true })
+				.add({ "%key": key, "@key": key }, { special: true })
 				.add(value)
 			));
 		});

@@ -60,9 +60,7 @@
     "can-view-scope": "^4.13.6",
     "can-view-target": "^5.0.0",
     "jquery": "1.11.3",
-    "steal": "^2.2.4",
-    "steal-config-utils": "^1.0.0",
-    "steal-qunit": "^1.0.0"
+    "steal-config-utils": "^1.0.0"
   },
   "steal": {
     "ext": {
@@ -70,6 +68,8 @@
     }
   },
   "devDependencies": {
+    "steal": "^2.2.4",
+    "steal-qunit": "^1.0.0",
     "testee": "^0.9.1"
   }
 }

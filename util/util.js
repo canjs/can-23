@@ -13,6 +13,7 @@ assign(can23, {
   camelize: canString.camelize,
   hyphenate: canString.hyphenate,
   capitalize: canString.capitalize,
+  underscore: canString.underscore,
   sub: js.string.sub,
   isEmptyObject: js.isEmptyObject,
   isArray: js.isArray,

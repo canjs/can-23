@@ -10,7 +10,24 @@ var $removeData = jQuery.removeData;
 var $trigger = jQuery.fn.trigger
 
 var rtypenamespace = /^([^.]*)(?:\.(.+)|)$/,
-  rnothtmlwhite = /[^\x20\t\r\n\f]+/g;
+  rnothtmlwhite = /[^\x20\t\r\n\f]+/g,
+  rdataattr = /^data-/;
+
+function dataFromAttributes(el, key) {
+  var ret;
+  if (key) {
+    ret = el.attributes.getNamedItem("data-" + key);
+    return ret == null ? undefined : ret;
+  } else {
+    ret = {};
+    [].slice.call(el.attributes).forEach(function(attr) {
+      if(rdataattr.test(attr.name)) {
+        ret[attr.name.replace(rdataattr, "")] = attr.value;
+      }
+    });
+    return ret;
+  }
+}
 
 assign(jQuery.fn, {
   viewModel: function(attr, value){
@@ -28,8 +45,15 @@ assign(jQuery.fn, {
     return this;
   },
   data: function() {
-    var ret = can23.data.apply(can23, [this].concat([].slice.call(arguments, 0)))
-    return arguments.length ? ($fndata.apply(this, arguments) || ret) : Object.assign({}, $fndata.apply(this, arguments), ret);
+    var el = this[0];
+    var attrData;
+    var ret = can23.data.apply(can23, [el].concat([].slice.call(arguments, 0)))
+    if (el && el.nodeType === 1 && arguments.length < 2) { // getter case for element
+      attrData = dataFromAttributes(el, arguments[0]);
+    }
+    return arguments.length
+      ? ($fndata.apply(this, arguments) || ret || attrData)
+      : Object.assign(attrData || {}, $fndata.apply(this, arguments), ret);
   },
   removeData: function() {
     can23.removeData.apply(can23, [this].concat([].slice.call(arguments, 0)))
@@ -42,7 +66,11 @@ canReflect.assignSymbols(jQuery.fn, {
 
 assign(jQuery, {
   data: function() {
-    var ret = can23.data.apply(can23, arguments);
+    var args = [].slice.call(arguments, 0);
+    if (args[0] && args[0].jquery) {
+      args[0] = args[0][0];
+    }
+    var ret = can23.data.apply(can23, args);
     return arguments.length > 1 ? ($data.apply(jQuery, arguments) || ret) : Object.assign({}, $data.apply(jQuery, arguments), ret);
   },
   removeData: function() {

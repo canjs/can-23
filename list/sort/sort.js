@@ -283,10 +283,12 @@ assign(proto, {
 		var patches = diffList(now, sorted);
 
 		var finalize = function() {
-			[].splice.apply(this,[ 0, sorted.length, ...sorted]);
-			canEventQueueMap.dispatch.call(this, 'can.patches', [patches]);
-			// Trigger length change so that {{#block}} helper can re-render
-			canEventQueueMap.dispatch.call(this, 'length', [this.length]);
+			if(patches.length) {
+				[].splice.apply(this,[ 0, sorted.length, ...sorted]);
+				canEventQueueMap.dispatch.call(this, 'can.patches', [patches]);
+				// Trigger length change so that {{#block}} helper can re-render
+				canEventQueueMap.dispatch.call(this, 'length', [this.length]);
+			}
 			return this;
 		}.bind(this);
 

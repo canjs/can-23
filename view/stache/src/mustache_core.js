@@ -26,6 +26,7 @@ function HelperOptions(scope, exprData, stringOnly) {
 	this.stringOnly = stringOnly;
 	this.scope = scope;
 	this.exprData = exprData;
+	this.context = scope._context;
 }
 defineLazyValue(HelperOptions.prototype,"context", function(){
 	return this.scope.peek("this");

@@ -116,6 +116,7 @@ var can23 = {
 	global: window,
 	makeArray: canReflect.toArray,
 	isArray: Array.isArray,
+	isPlainObject: canReflect.isPlainObject,
 	$: function(selector) {
 		if(typeof selector === "string") {
 			return document.querySelectorAll(selector);

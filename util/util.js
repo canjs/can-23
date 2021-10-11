@@ -6,6 +6,8 @@ var deparam = require("can-deparam");
 var param = require("can-param");
 var js = require("can-util/js/js");
 
+param.setStandardsMode(true);
+
 assign(can23, {
   param: param,
   deparam: deparam,

@@ -16,6 +16,7 @@ var viewModel = require("can-view-model");
 var queues = require("can-queues");
 var jQuery = require("jquery");
 var assign = require("can-assign");
+var deepAssign = require("can-util/js/deep-assign/deep-assign");
 var keyWalk = require("can-key/walk/walk");
 var keyUtils = require("can-key/utils");
 var debug = require("can-debug");
@@ -84,9 +85,14 @@ Construct._created = function(className, Constructor){
 var can23 = {
 	debug: debug,
 	extend: function(dest) {
+		var deep = false;
 		var sources = [].slice.call(arguments, 1);
+		if (typeof dest === "boolean") {
+			deep = dest;
+			dest = sources.shift();
+		}
 		sources.forEach(function(source) {
-			assign(dest, source);
+			(deep ? deepAssign : assign)(dest, source);
 		});
 		return dest;
 	},

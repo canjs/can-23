@@ -9,12 +9,13 @@ function template(imports, intermediate, filename){
 	imports = JSON.stringify(imports);
 	intermediate = JSON.stringify(intermediate);
 
-	return "define("+imports+",function(module, assign, stache, Scope, bindings){ \n" +
+	return "define("+imports+",function(module, shape, stache, Scope, bindings){ \n" +
     "\tstache.addBindings(bindings);\n"+
 		(filename ?
 			"\tvar renderer = stache(" + JSON.stringify(filename) + ", " + intermediate + ");\n" :
 			"\tvar renderer = stache(" + intermediate + ");\n"
 		) +
+		"\tvar assign = shape.assign;\n" +
 		"\tvar tagImports = Array.prototype.slice.call(arguments, 7);\n" +
 		"\treturn function(scope, options, nodeList){\n" +
 		"\t\tvar moduleOptions = options === Object(options) ? assign({}, options) : options;\n" +
@@ -29,7 +30,9 @@ function template(imports, intermediate, filename){
 		"\t\t\t/*scope = scope.addLetContext();*/\n" +
 		"\t\t\tvariableScope = scope;\n" +
 		"\t\t}\n" +
-		"\t\tassign(variableScope._context, { module: module, tagImportMap: tagImportMap });\n" +
+		"\t\tif (typeof variableScope._context === 'function' || typeof variableScope._context === 'object') {\n" +
+		"\t\t\tassign(variableScope._context, { module: module, tagImportMap: tagImportMap });\n" +
+		"\t\t}\n" +
 		"\n" +
 		"\t\treturn renderer(scope, moduleOptions, nodeList);\n" +
 		"\t};\n" +
@@ -88,7 +91,7 @@ function translate(load) {
 		ast.imports.unshift("can-23/view/scope/scope");
 		//ast.imports.unshift("can-stache/src/mustache_core");
 		ast.imports.unshift("can-23/view/stache/stache");
-		ast.imports.unshift("can-assign");
+		ast.imports.unshift("can-reflect/reflections/shape/shape");
 		ast.imports.unshift("module");
 
 		return template(

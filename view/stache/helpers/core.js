@@ -120,7 +120,7 @@ var helpersCore = {
 	},
 
 	getHelper: function(name, scope) {
-		var helper = scope && typeof scope.getHelper === "function" && scope.getHelper(name);
+		var helper = scope && scope.getHelperOrPartial(name);
 
 		if (!helper) {
 			helper = helpers[name];

@@ -516,6 +516,10 @@ if (!String.prototype.startsWith) {
 				} else {
 					return this;
 				}
+			},
+
+			isSpecial: function(){
+				return this._meta.notContext || this._meta.special || (this._context instanceof TemplateContext) || this._meta.variable;
 			}
 		});
 

@@ -4995,6 +4995,19 @@ function skip(test) {
 			equal((span[1].innerHTML), '1', 'iteration for %index');
 		});
 
+		test("Each with keys that have . like 'foo.bar' works (#14)", function () {
+			var template = can.stache('<p>{{#each this}}'+
+				'<span>{{%key}}</span><label>{{this}}</label>'+
+				'{{/each}}</p>');
+			var data = new can.Map({ "foo.bar": "baz" });
+			var dom = template(data);
+			var div = doc.createElement('div');
+			div.appendChild(dom);
+			console.log(div.innerHTML);
+			equal(div.getElementsByTagName('span')[0].innerHTML, "foo.bar", "key");
+			equal(div.getElementsByTagName('label')[0].innerHTML, "baz", "value");
+		});
+
 		// PUT NEW TESTS RIGHT BEFORE THIS!
 	}
 

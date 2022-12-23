@@ -47,5 +47,15 @@ can23.Map.prototype.__type = function (value, prop) {
     newValue = can23.Map.extend(newValue);
     newValue = new newValue();
   }
+  else if(can23.isArray(newValue) && !newValue._cid) {
+    newValue = new can23.List(newValue);
+  }
+  else if(can23.isPlainObject(newValue) && !newValue._cid) {
+    if (this.constructor.Map) {
+      newValue = new this.constructor.Map(newValue);
+    } else {
+      newValue = new can23.Map(newValue);
+    }
+  }
   return oldType.call(this, newValue, prop);
 };

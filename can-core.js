@@ -37,6 +37,7 @@ compute.set = stacheKey.set;
 List.prototype.each = List.prototype.forEach;
 
 var specialRead = {index: true, key: true, event: true, element: true, viewModel: true};
+
 var baseObjectRead = stacheKey.propertyReadersMap.object.read;
 stacheKey.propertyReadersMap.object.read = function compatabilityObjectRead(value, prop, reads, options, state, prev){
 	if(options.can23Compatibility ) {
@@ -58,6 +59,46 @@ stacheKey.propertyReadersMap.object.read = function compatabilityObjectRead(valu
 		return baseObjectRead.apply(this, arguments);
 	}
 };
+/*
+var baseMapRead = stacheKey.propertyReadersMap.map.read;
+stacheKey.propertyReadersMap.map.read = function compatabilityMapRead(value, prop, reads, options, state, prev){
+	if(options.can23Compatibility ) {
+		var valueType = typeof value;
+		if(value == null || (valueType !== 'object' && valueType !== 'function')) {
+			return undefined;
+		} else {
+			if(prop.key in value) {
+				return value[prop.key];
+			}
+			// TODO: remove in 3.0.  This is for backwards compat with @key and @index.
+			else if( prop.at && specialRead[prop.key] && ( ("@"+prop.key) in value)) {
+				prop.at = false;
+				return value["@"+prop.key];
+			}
+
+		}
+	} else {
+	debugger;
+		return baseMapRead.apply(this, arguments);
+	}
+};
+*/
+
+// The following tries to fix reading {{foo.bar}}
+// from a map like new CanMap({"foo.bar" :"zed"});
+// This more or less lets CanMap figure out how to read
+var oldStacheKeyGet = stacheKey.get;
+stacheKey.get = function(parent, readsOrString, options){
+	var reads = stacheKey.reads(readsOrString);
+	if( reads.length > 1 &&
+		  parent instanceof Map &&
+			Array.prototype.filter.call( reads, function(read){ return read.at }).length === 0 ) {
+		var singleRead = {key: Array.prototype.map.call( reads, function(read){ return read.key }).join(".") };
+		return stacheKey.read(parent, [singleRead], options || {}).value;
+	}
+	return stacheKey.read(parent, reads, options || {}).value;
+}
+
 
 var CanJSNames = {Control: 1, LetContext: 1, DefineList: 1};
 var constrctorCreated = Construct._created;
